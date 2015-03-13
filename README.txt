@@ -1,6 +1,4 @@
-﻿Updated information is also available at www.calaverastech.com.
-
-ABOUT THE TOOL
+﻿ABOUT THE TOOL
 --------------
 
 SNMPSniffer is an open source (GPLv3) desktop application with a graphic interface to sniff SNMP packets in the network. The data can be saved into a file. The application is written using Node.js and is run in a browser - Chrome or Firefox. 
@@ -166,5 +164,6 @@ CONTACTS
 You can also contact support@calaverastech.com with your bug reports, features and suggestions. Our google group is https://groups.google.com/forum/?hl=en#!forum/calaverascoding . Subscribe directly or subscribe from https://www.calaverastech.com/company to be added.
 
 Copyright (c) 2015 Calaveras Technologies
+www.calaverastech.com
 
 
