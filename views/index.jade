@@ -1,0 +1,111 @@
+extends layout
+
+block head
+	script(type="text/javascript", src="/backbone-min.js")
+	script(type="text/javascript", src="/backbone.localStorage-min.js")
+	script(type="text/javascript", src="/socket.io.js")
+	script(type="text/javascript", src="/app.js")
+	script(type="text/template", id="option_template")
+		<%= ip %><%= (port.length == 0)?'':(":"+port) %>
+		<input type='checkbox' name = 'src' class='src' value='<%= src %>' <%= src ? 'checked' : "" %>> src </input>
+		<input type='checkbox' name = 'dst' class='dst' value='<%= dst %>' <%= dst ? 'checked' : "" %>> dst </input>
+		<div class='action'><span class='ui-icon ui-icon-pencil edit-option' style='position:relative;' title='edit'/></div>
+		<div class='action'><span class='ui-icon ui-icon-trash remove-option' title ='remove'/></div>
+
+block heading 
+	h2(style="display:inline-block") SNMP Sniffer
+	input#exit(type="button", value="Exit", style="display:inline-block;margin-left:30px;width:160px;background-color:lightblue")
+	//a#show_log(href="javascript:void(0)", style="display:inline-block;margin-left:30px;") Show Session Log
+	p Capture SNMP packets over the network
+
+block content
+	#left(style="display:inline-block;vertical-align:top;width:35%;")
+		h3 PCAP Sniffer
+		//p Running the sniffer requires a superuser account. Please, enter the credentials. 
+		//p.authform
+		//	label(style="text-align:right;") User name:
+		//	input#username.formfield(type="text")
+		//	br
+		//	label(style="text-align:right;") Password:
+		//	input#password.formfield(type="password")
+		p
+			label Listen on interface:
+			select#interface(style="margin:0 10px 0 10px")
+				each i in _(interfaces).keys()
+					option(value="#{i}", selected=(i=="lo")) #{(i == "lo") ? (i + " (default)") : i}
+			a#show_options(href="javascript:void(0)") Show Options
+		#pcap_options(style="display:none")
+			.paramlabel
+				label Listen for IPs and Ports (optional):
+			#option_field.paramfield
+				ul#option_list(style="width:260px;height:80px;")
+				button#add_option.ui-icon.ui-icon-plusthick(style="display:inline-block;width:21px;height:21px;", title="Add an option")
+				button#remove_all.ui-icon.ui-icon-trash(style="display:inline-block;height:21px;width:21px;margin-left:10px;", title="Remove All")
+				span#options_message(style="font-size:smaller;padding-left:5px")
+				//button#refresh.ui-icon.ui-icon-refresh(style="display:inline-block;height:21px;width:21px;margin-left:10px;", title="Refresh")
+		div(style="display:inline-block;vertical-align:top;")
+			label Store in File (optional):
+		//input#fileupload(type="file")
+		div(style="display:inline-block;vertical-align:top;")
+			input#filename(type="text", style="margin:0 10px 0 10px")
+			br
+			sup default directory #{home}
+		//input#filebutton(type="button", value="Select File or Directory")
+		div(style="margin:10px 0 10px 0")
+			label Buffer size:
+			- var m = 2;
+			select#buffer(style="margin:0 10px 0 10px")
+				option(value="1", selected = true) Default
+				while m <= 10
+					option(value="#{m}") #{m}x
+					- m++
+		label Start/Stop pcap sniffer:
+		input#start_pcap(type="button", value="Start", style="margin-left:30px;width:200px")
+		p
+			label Sniffer status:
+			span#pcap_status
+				| &nbsp;&nbsp;&nbsp;
+				b 
+		h3(style="display:inline-block") Sniffer output:
+		input#pcap_clear(type="button", value="Clear", style="display:inline-block;margin-left:30px;")
+		#pcap_output_options(style="margin-left:30px;display:inline-block;")
+			input#responses_only(type="checkbox")
+			span Show responses only
+		ul#pcap_output.output
+	#right(style="display:inline-block;vertical-align:top;width:65%;")
+		h3 Run SNMP (optional, can be run in the network instead)
+		label NET-SNMP commands (separate by a semicolon):
+		div(style="display:inline-block;padding-left:50px;")
+			span Increase max buffer:
+			- var n = 1
+			select#buffer(style="margin-left:3px;")
+				while n <= 10
+					option(value="#{n}", selected = (n === 2)) #{n}x
+					- n++
+		br
+		sup NET-SNMP must be installed on this computer
+		br
+		textarea#snmp_commands(rows="10", cols="80", name="commands")
+		br
+		input#run_snmp(type="button", value="Run SNMP", style="width:200px")
+		h3 
+			| SNMP output:
+			input#snmp_clear(type="button", value="Clear", style="margin-left:30px")
+			img(src="/images/loader.gif", id="snmp_loading", hidden="hidden", style="margin-left:30px")
+		ul#snmp_output.output
+	//#log(title="Show Session Log")
+	//	ul
+	#add_dialog(title="Add Option")
+		span Either ip or port are required
+		form#dialog_form
+			input#id(type="hidden", value="0", name="id")
+			.dialoglabel
+				label(style="text-align:right;") IP or IP range:
+			input#ip(type="text", name="ip")
+			label(style="text-align:right;") source
+			input#src(type="checkbox", name="src", value="true")
+			label(style="text-align:right;") destination
+			input#dst(type="checkbox", name="dst", value="true")
+			.dialoglabel
+				label(style="text-align:right;") Ports or ranges (comma separated):
+			input#port(type="text", name="port")

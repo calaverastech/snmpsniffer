@@ -1,0 +1,11 @@
+#!/bin/sh
+
+prefix=$(which node | sed 's|/bin/.*||')
+if [ "x$prefix" = "x" ];then
+	echo "Nodejs is not installed"
+	exit 1
+fi
+export SNMPSNIFFER_HOME="$prefix/lib/node_modules/snmpsniffer"
+
+cd $SNMPSNIFFER_HOME
+node server $*

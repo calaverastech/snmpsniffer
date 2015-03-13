@@ -1,0 +1,25 @@
+{
+    "author": "admin@calaverastech.com",
+    "name": "snmpsniffer",
+    "description": "sniff and record snmp from network",
+    "version": "1.0.0",
+    "private": true,
+    "engines": {
+        "node": "0.10.x",
+        "npm": "1.x"
+    },
+    "main": "node/main",
+    "dependencies": {
+        "connect": "3.3",
+        "express": "4.10",
+        "body-parser": "1.10",
+        "underscore": "1.6.x",
+        "backbone": "1.1",
+        "jade": "1.8",
+        "pcap": "2.x",
+        "socket.io": "1.2",
+        "semver": "1.1",
+        "minimist": "1.1",
+        "log4js": "0.6.x"
+    }
+}

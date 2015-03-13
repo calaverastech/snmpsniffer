@@ -1,0 +1,41 @@
+#!/bin/sh
+
+export PATH=“/sw/bin:/sw/sbin:/opt/local/bin:/opt/local/sbin:/opt/local/bin:/opt/local/sbin:/opt/local/bin:/opt/local/sbin:/opt/local/bin:/opt/local/sbin:/opt/local/bin:/opt/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/opt/X11/bin:$PATH”
+
+prefix=$(which node | sed 's|/bin/.*||')
+if [ "x$prefix" = "x" ];then
+	echo "Nodejs is not installed"
+	exit 1
+fi
+
+i=0
+cur=""
+cd $(dirname $0)
+while [ "x$cur" = "x" ] && [ "$cur" != "/" ] && [ $i -lt 5 ] 
+do
+	cur=$(ls | grep 'server.*js')
+	if [ "x$cur" = "x" ];then 
+		cd ../
+	fi
+	i=$((i+1))
+done
+if [ "x$cur" = "x" ];then
+	if [ -z $SNMPSNIFFER_HOME ];then
+		sniff=$(ls "$prefix/lib/node_modules" | grep "snmpsniffer")
+		if [ "x$sniff" = "x" ];then
+			echo "The library is not installed"
+			exit 1
+		fi
+		export SNMPSNIFFER_HOME="$prefix/lib/node_modules/snmpsniffer"
+	fi
+	cd $SNMPSNIFFER_HOME
+fi
+
+serv=$(ls | grep 'server.min.js')
+if [ "x$serv" = "x" ];then
+	serv=$(ls | grep 'server.js')
+fi
+
+node $serv $*
+
+

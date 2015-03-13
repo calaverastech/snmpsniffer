@@ -1,0 +1,17 @@
+#!/bin/sh
+
+prefix=$(which node 2>/dev/null | sed "s|/bin/.*||")
+dir="$prefix/lib/node_modules/snmpsniffer"
+cd $prefix
+echo "Installing plugins..."
+sudo "$prefix/bin/npm" install -g lib/node_modules/snmpsniffer
+export SNMPSNIFFER_HOME="$dir"
+
+echo "Checking the application data directory..."
+if [ ! -d "$HOME/.snmpsniffer"  ]; then
+	mkdir "$HOME/.snmpsniffer"
+	cp -R $dir/files/* "$HOME/.snmpsniffer"
+	if [ ! -d "$HOME/.snmpsniffer/license" ]; then mkdir "$HOME/.snmpsniffer/license"; fi
+fi
+
+

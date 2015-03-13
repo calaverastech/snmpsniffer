@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+RESULT=$(/usr/bin/open /usr/local/lib/node_modules/snmpsniffer/postinstall)
+exit 0

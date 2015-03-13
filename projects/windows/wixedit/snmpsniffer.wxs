@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Name="SNMPSniffer" Id="16ECA7F5-0A47-48F7-AB42-A5F8E6FEA835" UpgradeCode="CFC5E7C3-62F2-45A1-8892-131B8ED6DD56" Language="1033" Codepage="1252" Version="1.0" Manufacturer="Calaveras Technologies Inc">
+        <Package Id="*" Keywords="Installer" Description="SNMPSniffer v1.0 Installer" />
+        <Media Id="1" Cabinet="Netplayback.cab" EmbedCab="yes" DiskPrompt="CD-ROM #1">
+        </Media>
+        <Icon Id="SNMPSnifferIcon.ico" SourceFile="..\..\snmpsniffer\icons\snmp_sniffer.ico" />
+        <Icon Id="ReadmeIcon.ico" SourceFile="..\..\snmpsniffer\README.txt" />
+        <Property Id="DiskPrompt" Value="SNMPSniffer Installation [1]" />
+        <Property Id="ARPPRODUCTICON" Value="SNMPSnifferIcon.ico" />
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="NODE_DIR" Name="NodeDir">
+                <Directory Id="INSTALLDIR" Name="node_modules">
+                    <Directory Id="NODEAPP" Name="nodeapp">
+                        <Component Id="SERVER" Guid="C42034A8-4D21-4D86-924B-2002A26D6933" DiskId="1">
+                            <File Id="PACKAGE.JSON" Name="package.json" Source="..\..\snmpsniffer\package.json" />
+                            <File Id="SERVER.MIN.JS" Name="server.min.js" Source="..\..\snmpsniffer\server.min.js" />
+                            <File Id="README.TXT" Name="README.txt" Source="..\..\snmpsniffer\README.txt" KeyPath="yes" />
+                            <File Id="PREPROCESS.MIN.JS" Name="preprocess.min.js" Source="..\..\snmpsniffer\preprocess.min.js" />
+                            <File Id="ASN1.MIN.JS" Name="asn1.min.js" Source="..\..\snmpsniffer\asn1.min.js" />
+                            <File Id="BASE64.MIN.JS" Name="base64.min.js" Source="..\..\snmpsniffer\base64.min.js" />
+                            <File Id="HEX.MIN.JS" Name="hex.min.js" Source="..\..\snmpsniffer\hex.min.js" />
+                        </Component>
+                        <Component Id="LICENSE" Guid="7EB3DA21-48B5-45BB-9C39-7B5B8D894C20">
+                            <File Id="LICENSE_GNU_GPLV3.TXT" Name="LICENSE-GNU_GPLv3.txt" Source="..\..\snmpsniffer\LICENSE-GNU_GPLv3.txt" />
+                        </Component>
+                        <Directory Id="FILES" Name="files">
+                            <Directory Id="CONFIG" Name="config">
+                            </Directory>
+                        </Directory>
+                        <Directory Id="ICONS" Name="icons">
+                            <Component Id="ALLICONS" Guid="F1196DC7-3619-4BF4-A7ED-57EA2968B18A" DiskId="1">
+                                <File Id="SNMP_SNIFFER16X16.PNG" Name="snmp_sniffer16x16.png" Source="..\..\snmpsniffer\icons\snmp_sniffer16x16.png" />
+                                <File Id="SNMP_SNIFFER22X22.PNG" Name="snmp_sniffer22x22.png" Source="..\..\snmpsniffer\icons\snmp_sniffer22x22.png" />
+                                <File Id="SNMP_SNIFFER24X24.PNG" Name="snmp_sniffer24x24.png" Source="..\..\snmpsniffer\icons\snmp_sniffer24x24.png" />
+                                <File Id="SNMP_SNIFFER32X32.PNG" Name="snmp_sniffer32x32.png" Source="..\..\snmpsniffer\icons\snmp_sniffer32x32.png" />
+                                <File Id="SNMP_SNIFFER48X48.PNG" Name="snmp_sniffer48x48.png" Source="..\..\snmpsniffer\icons\snmp_sniffer48x48.png" />
+                                <File Id="SNMP_SNIFFER64X64.PNG" Name="snmp_sniffer64x64.png" Source="..\..\snmpsniffer\icons\snmp_sniffer64x64.png" />
+                                <File Id="SNMP_SNIFFER128X128.PNG" Name="snmp_sniffer128x128.png" Source="..\..\snmpsniffer\icons\snmp_sniffer128x128.png" />
+                                <File Id="SNMP_SNIFFER256X256.PNG" Name="snmp_sniffer256x256.png" Source="..\..\snmpsniffer\icons\snmp_sniffer256x256.png" />
+                                <File Id="SNMP_SNIFFER512X512.PNG" Name="snmp_sniffer512x512.png" Source="..\..\snmpsniffer\icons\snmp_sniffer512x512.png" />
+                                <File Id="SNMP_SNIFFER.ICO" Name="snmp_sniffer.ico" Source="..\..\snmpsniffer\icons\snmp_sniffer.ico" />
+                            </Component>
+                        </Directory>
+                        <Directory Id="PUBLIC" Name="public">
+                            <Directory Id="CSS" Name="css">
+                                <Component Id="MAIN.CSS" DiskId="1" Guid="3DF817E0-0D71-4F7C-AEB7-5A1F1A2954E7">
+                                    <File Id="MAIN.CSS" Name="main.css" Source="..\..\netplayback64\public\css\main.css" />
+                                </Component>
+                                <Directory Id="IMAGES" Name="images">
+                                    <Component Id="ALLIMAGES" Guid="81D619DB-D000-4634-A1A3-525542DAD582" DiskId="1">
+                                        <File Id="LOADER.GIF" Name="loader.gif" Source="..\..\snmpsniffer\public\css\images\loader.gif" />
+                                    </Component>
+                                </Directory>
+                                <Directory Id="JQUERY" Name="jquery">
+                                    <Component Id="JQUERYCSS" Guid="C8ACDF5F-7A77-4267-AE5C-BF0B090BA12A" DiskId="1">
+                                        <File Id="JQUERY_UI.MIN.CSS" Name="jquery-ui.min.css" Source="..\..\snmpsniffer\public\css\jquery\jquery-ui.min.css" />
+                                        <File Id="JQUERY_UI.STRUCTURE.MIN.CSS" Name="jquery-ui.structure.min.css" Source="..\..\snmpsniffer\public\css\jquery\jquery-ui.structure.min.css" />
+                                        <File Id="JQUERY_UI.THEME.MIN.CSS" Name="jquery-ui.theme.min.css" Source="..\..\snmpsniffer\public\css\jquery\jquery-ui.theme.min.css" />
+                                    </Component>
+                                </Directory>
+                            </Directory>
+                            <Directory Id="JS" Name="js">
+                                <Component Id="ALLJS" Guid="821C88DE-6642-4308-8ED2-E8437CEE1992" DiskId="1">
+                                    <File Id="APP.MIN.JS" Name="app.min.js" Source="..\..\snmpsniffer\public\js\app.min.js" />
+                                    <File Id="BACKBONE.LOCALSTORAGE_MIN.JS" Name="backbone.localStorage-min.js" Source="..\..\snmpsniffer\public\js\backbone.localStorage-min.js" />
+                                    <File Id="BACKBONE_MIN.JS" Name="backbone-min.js" Source="..\..\snmpsniffer\public\js\backbone-min.js" />
+                                    <File Id="UNDERSCORE_MIN.JS" Name="underscore-min.js" Source="..\..\snmpsniffer\public\js\underscore-min.js" />
+                                </Component>
+                                <Directory Id="JQUERY_1" Name="jquery">
+                                    <Component Id="JQUERYJS" Guid="F5A6AB8F-9EA4-4FE8-8A76-8FC63AA2E183" DiskId="1">
+                                        <File Id="JQUERY_1.11.1.MIN.JS" Name="jquery-1.11.1.min.js" Source="..\..\snmpsniffer\public\js\jquery\jquery-1.11.1.min.js" />
+                                        <File Id="JQUERY_UI.MIN.JS" Name="jquery-ui.min.js" Source="..\..\snmpsniffer\public\js\jquery\jquery-ui.min.js" />
+                                    </Component>
+                                </Directory>
+                            </Directory>
+                        </Directory>
+                        <Directory Id="VIEWS" Name="views">
+                            <Component Id="VIEWS" Guid="21EE8391-8D17-4A47-8492-9DDFE00BB466" DiskId="1">
+                                <File Id="INDEX.JADE" Name="index.jade" Source="..\..\snmpsniffer\views\index.jade" />
+                                <File Id="LAYOUT.JADE" Name="layout.jade" Source="..\..\snmpsniffer\views\layout.jade" />
+                            </Component>
+                        </Directory>
+                        <Directory Id="DOC" Name="doc">
+                            <Component Id="INDEX.HTML" DiskId="1" Guid="2D141E3E-FE7D-4B8D-B25E-D704AC25A6D4">
+                                <File Id="INDEX.HTML" Name="index.html" Source="..\..\netplayback64\doc\index.html" />
+                            </Component>
+                        </Directory>
+                    </Directory>
+                </Directory>
+                <Component Id="Command" Guid="48911E9F-C32E-44F8-9AFE-91F2751D73CE">
+                    <File DiskId="1" Id="CMD" Name="snmsniffer.cmd" Source="..\..\snmpsniffer\snmpsniffer.cmd" KeyPath="yes" />
+                </Component>
+            </Directory>
+            <Directory Id="ProgramMenuFolder" Name="Programs">
+                <Directory Id="ProgramMenuDir" Name="SnmpSniffer" />
+                <Directory Id="DesktopFolder" Name="Desktop" />
+            </Directory>
+            <Directory Id="DATA_DIR" Name="DataDir">
+                <Directory Id="APPFOLDER" Name=".snmpsniffer">
+                    <Directory Id="CONFIGDATA" Name="config">
+                    </Directory>
+                    <Directory Id="LOGDATA" Name="log">
+                        <Component Id="CreateLogFolder" Guid="7F5D79D3-5CD6-4A36-9DF3-A4C9DA501B5A" NeverOverwrite="yes" Permanent="yes">
+                            <CreateFolder />
+                        </Component>
+                    </Directory>
+                </Directory>
+            </Directory>
+        </Directory>
+        <DirectoryRef Id="ProgramMenuDir">
+            <Component Id="ApplicationShortcut" Guid="1958531A-E02A-43E5-81DA-DD4E124A1FEF">
+                <Shortcut Id="startmenuSNMPSniffer" Name="SNMPSniffer" WorkingDirectory="NODE_DIR" Icon="SNMPSnifferIcon.ico" IconIndex="0" Target="[SYSTEMFOLDER]cmd.exe" Arguments="/k snmpsniffer" />
+                <Shortcut Id="startmenuReadme" Name="index.html" WorkingDirectory="NODEAPP" Icon="ReadmeIcon.ico" IconIndex="0" Target="[DOC]index.html" />
+                <Shortcut Id="UninstallProduct" Name="Uninstall SNMPSniffer" Target="[SystemFolder]msiexec.exe" Arguments="/x [ProductCode]" WorkingDirectory="INSTALLDIR" />
+                <RemoveFolder Id="ProgramMenuDir" On="uninstall" />
+                <RemoveFolder Id="NODEAPP" On="uninstall" />
+                <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]" Type="string" Value="" KeyPath="yes" />
+            </Component>
+        </DirectoryRef>
+        <DirectoryRef Id="DesktopFolder">
+            <Component Id="DesktopShortcut" Guid="C67BECA2-3201-421D-8C8E-AEF1FD205308">
+                <Shortcut Id="desktopSNMPSniffer" Name="SNMPSniffer" WorkingDirectory="NODE_DIR" Icon="SNMPSnifferIcon.ico" IconIndex="0" Target="[SYSTEMFOLDER]cmd.exe" Arguments="/k snmpsniffer" />
+                <RegistryValue Key="Software\[Manufacturer]\[ProductName]" KeyPath="yes" Root="HKCU" Type="string" Value="" />
+            </Component>
+        </DirectoryRef>
+        <Feature Id="Complete" Level="1" ConfigurableDirectory="INSTALLDIR" Display="expand">
+            <ComponentRef Id="Command" />
+            <ComponentRef Id="ApplicationShortcut" />
+            <ComponentRef Id="DesktopShortcut" />
+            <ComponentGroupRef Id="APPGROUP" />
+        </Feature>
+        <ComponentGroup Id="APPGROUP">
+            <ComponentRef Id="SERVER" />
+            <ComponentRef Id="ALLICONS" />
+            <ComponentRef Id="MAIN.CSS" />
+            <ComponentRef Id="ALLIMAGES" />
+            <ComponentRef Id="JQUERYCSS" />
+            <ComponentRef Id="ALLJS" />
+            <ComponentRef Id="JQUERYJS" />
+            <ComponentRef Id="VIEWS" />
+            <ComponentRef Id="INDEX.HTML" />
+            <ComponentRef Id="CreateLogFolder" />
+            <ComponentRef Id="LICENSE" />
+        </ComponentGroup>
+        <CustomAction Id="SetApplicationRoot" Directory="NODE_DIR" Value="[%NODE_PATH]" />
+        <CustomAction Id="ExecNPM" Execute="deferred" ExeCommand="[SYSTEMFOLDER]cmd.exe /c npm install" Return="check" Impersonate="no" Directory="NODEAPP">
+        </CustomAction>
+        <CustomAction Id="RemoveNPMPlugins" ExeCommand="[SYSTEMFOLDER]cmd.exe /c rmdir /s/q node_modules" Directory="NODEAPP" Impersonate="no" Return="ignore" Execute="deferred" />
+        <CustomAction Id="SetDataDirectory" Value="[%USERPROFILE]" Directory="DATA_DIR" />
+        <InstallUISequence>
+            <!-- Execute the custom action to set the install folders -->
+            <Custom Action="SetApplicationRoot" After="CostFinalize" />
+            <Custom Action="SetDataDirectory" After="CostFinalize" />
+        </InstallUISequence>
+        <InstallExecuteSequence>
+            <Custom Action="ExecNPM" After="InstallFiles">UPGRADINGPRODUCTCODE OR (NOT REMOVE="ALL")</Custom>
+        </InstallExecuteSequence>
+        <InstallExecuteSequence>
+            <Custom Action="RemoveNPMPlugins" Before="RemoveFiles">(NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")</Custom>
+        </InstallExecuteSequence>
+        <DirectoryRef Id="DesktopFolder" />
+        <UIRef Id="WixUI_Minimal" />
+        <UIRef Id="WixUI_ErrorProgressText" />
+        <UI />
+        <WixVariable Id="WixUILicenseRtf" Value="..\..\snmpsniffer\LICENSE.rtf" />
+        <Condition Message="The environment variable NODE_PATH is not set or Nodejs is not installed. Please, install Nodejs and set NODE_PATH to its installation folder (default installation path C:\Program Files\nodejs)"><![CDATA[%NODE_PATH]]></Condition>
+    </Product>
+</Wix>
