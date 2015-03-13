@@ -1,4 +1,4 @@
-﻿Updated information is also available at www.calaverastech.com/documentation/snmpsniffer.
+﻿Updated information is also available at www.calaverastech.com.
 
 ABOUT THE TOOL
 --------------
