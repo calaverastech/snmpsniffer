@@ -163,7 +163,7 @@ CONTACTS
 
 You can also contact support@calaverastech.com with your bug reports, features and suggestions. Our google group is https://groups.google.com/forum/?hl=en#!forum/calaverascoding . Subscribe directly or subscribe from https://www.calaverastech.com/company to be added.
 
-Copyright (c) 2015 Calaveras Technologies
+Copyright (c) 2015 Calaveras Technologies Inc 
 www.calaverastech.com
 
 
