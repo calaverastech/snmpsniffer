@@ -40,9 +40,9 @@ if [ "x$prefix" = "x" ]; then
 	echo "Nodejs is not installed"
 	exit 1
 else
-	version10=$(node --version | grep "^v0\.10$\|^v0\.10\...*")
-	if [ -z $version10 ]; then
-		echo "The application required Nodejs version 0.10, which is not installed. If you have an earlier version installed, please, update it"
+	versionshort=$(node --version | sed -r 's|^v0\.([0-9]+)\.([0-9]+)|\1|'| bc)
+	if [ $versionshort -lt 10 ]; then
+		echo "Your Nodejs version is $version10. The application required Nodejs version 0.10 or above, please, update your version."
 		exit 1
 	fi
 fi

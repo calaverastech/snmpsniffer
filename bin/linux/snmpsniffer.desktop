@@ -1,6 +1,6 @@
 [Desktop Entry]
-Name=SNMP Package Sniffer
-GenericName=Package Sniffer
+Encoding=UTF-8
+Name=SNMPSniffer
 Comment=Sniff and record SNMP traffic in the network
 Exec=snmpsniffer
 Icon=snmpsniffer

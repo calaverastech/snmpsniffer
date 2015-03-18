@@ -182,10 +182,12 @@ $(document).ready(function () {
 	
 
 	$("#option_field > button").tooltip();
-    $("#option_list").resizable({  maxWidth: Math.max($(window).width()/5, 500) });
-    $("#commands").resizable({  maxWidth: Math.max($(window).width()/3, 800) });
-    $("#pcap_output").resizable({ maxWidth: Math.max($(window).width()/3, 600) });
-    $("#snmp_output").resizable({ maxWidth: Math.max($(window).width()/3, 800) });
+	var wid = $("#content").width()/2;
+	//console.log(Math.max(wid, 600));
+    $("#option_list").resizable({  maxWidth: Math.max($("#content").width()/5, 500) });
+    $("#commands").resizable({  maxWidth: Math.max(wid, 800) });
+    $("#pcap_output").resizable({ maxWidth: Math.max(wid, 600) });
+    $("#snmp_output").resizable({ maxWidth: Math.max(wid, 800) });
     
     function resizeToWidth(elem, w3) {
     	if($(elem).width() > w3 || $(elem).width() < w3) {
@@ -193,19 +195,23 @@ $(document).ready(function () {
     	} 
     }
     
-    function resizeWin() {
-    	var win3 = $(window).width()/3;
-    	resizeToWidth($("#commands"), win3);
-    	resizeToWidth($("#snmp_output"), win3);
-    	resizeToWidth($("#pcap_output"), win3);
-    	resizeToWidth($("#option_list"), win3);
-    }
+    resizeToWidth($("#commands"), Math.min(wid, 800));
+    resizeToWidth($("#snmp_output"), Math.min(wid, 800));
+    resizeToWidth($("#pcap_output"), Math.min(4*wid/5, 600));
+    resizeToWidth($("#option_list"), Math.min($("#content").width()/5, 500));
     
-    resizeWin();
+    //function resizeWin(wid1, wid2) {
+    //	resizeToWidth($("#commands"), wid1);
+    //	resizeToWidth($("#snmp_output"), wid1);
+    //	resizeToWidth($("#pcap_output"), wid1);
+    //	resizeToWidth($("#option_list"), wid2);
+    //}
     
-    $(window).resize(function() {
-    	resizeWin();
-    });
+    //resizeWin($("#content").width()/3, $("#content").width()/5);
+    
+    //$(window).resize(function() {
+    //	resizeWin($("#content").width()/3, $("#content").width()/5);
+    //});
     
     
     function get_form_data(form, data) {

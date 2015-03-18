@@ -339,7 +339,7 @@ app.use(express.static(__dirname + '/node_modules/socket.io/node_modules/socket.
 
 app.get('/', function(req, res){
 	var interfaces = require('os').networkInterfaces();
-	var home = getUserHome() + ((ostype == 'Windows_NT')?"\\":"/" + PCAP_DIR);
+	var home = getUserHome() + ((ostype == 'Windows_NT')?"\\":"/" + PCAP_DATA_DIR);
 	res.render('index', {interfaces: interfaces, home:home});
 });
 
@@ -460,18 +460,18 @@ function socketConnect(socket) {
 						  var timestamp = Math.round(100 * (header.tv_sec * 1000 + header.tv_usec/1000 - now))/100;
 						  //console.log(util.inspect(packet, {depth: null}));
 						  //console.log(packet.link.ip.udp.data.toString('hex'));
-						  var asn1 = decode(packet.link.ip.udp.data.toString('hex'));
+						  var asn1 = decode(packet.payload.payload.payload.data.toString('hex'));
 						  var pdu = decoded_pdu(asn1);
 						  //console.log(util.inspect(pdu, {depth: null}));
 						  if(!!pdu.oids && pdu.oids.length > 0) {
 							  pdu['timestamp'] = timestamp;
-							  pdu['ip'] = packet.link.ip.daddr;
+							  pdu['ip'] = _(packet.payload.payload.daddr).values().join(".");
 							  write(pdu);
 							  socket.emit("pcap_track", {packet: pdu, responses_only:responses_only});
 						  }
 					  }
 				  } catch(err1) {
-					  logger.error(err1.message);
+					  logger.error("packet capture error: " + err1.message);
 					  //console.log(err1.message);
 				  }
 			  });
