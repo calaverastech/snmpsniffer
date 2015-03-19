@@ -34,7 +34,6 @@ if [ ! -z $node ] && [ -d $node ]; then
 	fi
 fi
 prefix=$(which node 2>/dev/null | sed "s|/bin/.*||")
-echo "prefix $prefix"
 dir="$prefix/lib/node_modules/snmpsniffer"
 if [ "x$prefix" = "x" ]; then
 	echo "Nodejs is not installed"
