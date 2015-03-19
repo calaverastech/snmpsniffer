@@ -399,14 +399,15 @@ function socketConnect(socket) {
 	  var filter = "";
 	  if(ports.length > 0) {
 		  var d = ((direction.length > 0) ? direction : " ");
-		  filter += " and (";
+		  //filter += " and (";
 		  filter += _.map(ports, function(port) {
 			  savedports.push(port);
 			  return d + (port.match(PORTRange) ? " portrange " : " port ") + port;
 		  }).join(" and ");
-		  filter += " ) ";
+		  //filter += " ) ";
 	  } else {
-		  filter += " and port " + DEFAULT_PORT;
+		  //filter += " and port " + DEFAULT_PORT;
+		  filter += " port " + DEFAULT_PORT;
 		  savedports.push(DEFAULT_PORT);
 	  }
 	  return filter;
@@ -429,7 +430,11 @@ function socketConnect(socket) {
 			  if(opt.ip.length > 0) { 
 				ipstr = ((direction.length > 0) ? direction : (opt.ip.match(IP4CIDRRegex) ? " net " : " host ")) + opt.ip;
 			  };
-			  return ipstr + stringifyPorts(opt.ports, direction, savedports);
+			  var portstr = stringifyPorts(opt.ports, direction, savedports);
+			  if(ipstr.length > 0 && portstr.length > 0) {
+				  portstr = " and ( " + portstr + " ) ";
+			  }
+			  return ipstr + portstr;
 		  }).join(" or ");
 	  } 
 	  return filter;
@@ -446,6 +451,7 @@ function socketConnect(socket) {
 		  var options = data.options;
 		  var ports = [];
 		  var filter = "udp and " + stringifyOpts(data.options, ports);
+		  console.log("filter", filter);
 		  try {
 			  pcap_session = pcap.createSession(data.inter, filter, pcapBufferSize*data.bufferMult);
 			  logger.info("starting sniffing...");
