@@ -7,7 +7,14 @@ if [ "x$prefix" = "x" ];then
 	echo "Nodejs is not installed"
 	exit 1
 fi
-
+running=$(ps aux | grep "node " | grep -v grep)
+ki="N"
+if [ "x$running" = "x" ];then
+	echo "Nodejs is already running, you have to stop it. Would you like to kill the process? [Y/N]"
+    read ki
+    if [ $ki != "Y" ] && [ $ki != "y" ]; then exit 0; fi
+    sudo pkill -f "node "
+fi
 i=0
 cur=""
 cd $(dirname $0)
