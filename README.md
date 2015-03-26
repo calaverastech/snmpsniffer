@@ -87,6 +87,8 @@ https://github.com/TooTallNate/node-gyp
 
   NOTE: the process opens a shell to download and install some npm packages. Depending on your Internet connection,   you might see errors (marked in red) and/or  the application might fail starting in a shell with a message that some  package is not installed. If it happens, it means there is a problem with internet connection and some or all packages were not loaded. Verify your internet connection, close applications that consume too much bandwidth and resources; then uninstall the application and install it again. 
 
+4. If you don't see the application in the desktop menu, you may want to restart the desktop. 
+
 
 #### RUNNING THE APPLICATION
 
