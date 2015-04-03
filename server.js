@@ -451,7 +451,7 @@ function socketConnect(socket) {
 		  var options = data.options;
 		  var ports = [];
 		  var filter = "udp and " + stringifyOpts(data.options, ports);
-		  console.log("filter", filter);
+		  //console.log("filter", filter);
 		  try {
 			  pcap_session = pcap.createSession(data.inter, filter, pcapBufferSize*data.bufferMult);
 			  logger.info("starting sniffing...");
