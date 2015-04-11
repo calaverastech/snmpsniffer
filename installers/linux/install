@@ -46,7 +46,7 @@ else
 	fi
 fi
 echo "Installing packages..."
-sudo "$prefix/bin/npm" install -g
+sudo NODE_ENV=production "$prefix/bin/npm" install -g
 
 echo "Checking the application data directory..."
 if [ ! -d "$HOME/.snmpsniffer/config"  ]; then

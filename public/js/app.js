@@ -163,9 +163,9 @@ $(document).ready(function () {
 	
 	window.onbeforeunload = closeWindow;
 	$("#exit").on("click", function() {
-		window.open('','_parent','');
-		window.close();
-		socket.emit("kill_window");
+		window.open(location, '_self').close();
+		//window.close();
+		//socket.emit("kill_window");
 	});
 	
 	function closeWindow(){

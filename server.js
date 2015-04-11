@@ -7,8 +7,11 @@ var fs = require('fs'),
 var bodyParser = require('body-parser');
 var _ = require('underscore');
 var preprocessor = require('./preprocess.js');
-var exec = require('child_process').exec, 
+var child_process = require('child_process');
+var exec = child_process.exec, 
+    spawn = child_process.spawn, 
 	child, snmp_process, pcap_process;
+var psTree = require('ps-tree');
 //var pcap = require('./build/Release/pcap_binding'),
 //  socketwatcher = require('./build/Release/socketwatcher');
 //var pcap = require('./pcap.js');
@@ -35,6 +38,31 @@ var snmpBufferSize = 200*1024;
 var PCAP_DIR = ".snmpsniffer",
 	PCAP_DATA_DIR = ".snmpsniffer_data",
 	LOG_DIR = path.join(PCAP_DIR, "log");
+	
+var psTree = require('ps-tree');
+
+var kill = function (pid, signal, callback) {
+    signal   = signal || 'SIGKILL';
+    callback = callback || function () {};
+    var killTree = true;
+    if(killTree) {
+        psTree(pid, function (err, children) {
+            [pid].concat(
+                children.map(function (p) {
+                    return p.PID;
+                })
+            ).forEach(function (tpid) {
+                try { process.kill(tpid, signal); }
+                catch (ex) { }
+            });
+            callback();
+        });
+    } else {
+        try { process.kill(pid, signal); }
+        catch (ex) { }
+        callback();
+    }
+};	
 	
 function createDir(name) {
 	if(!!name && name.length > 0 && !fs.existsSync(name)) {
@@ -465,13 +493,17 @@ function socketConnect(socket) {
 						  var header = packet.pcap_header;
 						  var timestamp = Math.round(100 * (header.tv_sec * 1000 + header.tv_usec/1000 - now))/100;
 						  //console.log(util.inspect(packet, {depth: null}));
-						  //console.log(packet.link.ip.udp.data.toString('hex'));
+						  //console.log(packet.payload.payload.payload.data.toString('hex'));
 						  var asn1 = decode(packet.payload.payload.payload.data.toString('hex'));
 						  var pdu = decoded_pdu(asn1);
 						  //console.log(util.inspect(pdu, {depth: null}));
 						  if(!!pdu.oids && pdu.oids.length > 0) {
 							  pdu['timestamp'] = timestamp;
-							  pdu['ip'] = _(packet.payload.payload.daddr).values().join(".");
+							  if(pdu['command'] === 'Response') {
+								  pdu['ip'] = _(packet.payload.payload.saddr).values().join(".");
+							  } else {
+								  pdu['ip'] = _(packet.payload.payload.daddr).values().join(".");
+							  }
 							  write(pdu);
 							  socket.emit("pcap_track", {packet: pdu, responses_only:responses_only});
 						  }
@@ -518,21 +550,38 @@ function socketConnect(socket) {
 	  	var bufferMult = snmp.bufferMult;
 	  	if(_(data).isArray()) {
 	  		snmp_running = true;
+	  		logger.info("SNMP run started...");
 	  		_(data).each(function(d) {
 	  			if(snmp_running) {
 	  				try {
-			  			exec(d, {maxBuffer: bufferMult*snmpBufferSize}, function(err, stdout, stderr) {
-			  			    if (err !== null) {
-			  			      var error = err.message;
-			  			      logger.error('exec error: ' + error);
-			  			      //console.log('exec error: ' + error);
-			  			      socket.emit("app_error", error);
-			  			      socket.emit("snmp_track", {count:data.length, input:d, error:error});
-			  			    } else {
-			  			    	socket.emit("snmp_track", {count:data.length, input:d, output:stdout});
-			  			    }
-			  			 });
+			  			//snmp_process = exec(d, {maxBuffer: bufferMult*snmpBufferSize}, function(err, stdout, stderr) {
+			  			//    if (err !== null) {
+			  			//      var error = err.message;
+			  			//      logger.error('exec error: ' + error);
+			  			//      //console.log('exec error: ' + error);
+			  			//      socket.emit("app_error", error);
+			  			//      socket.emit("snmp_track", {count:data.length, input:d, error:error});
+			  			//    } else {
+			  			//    	socket.emit("snmp_track", {count:data.length, input:d, output:stdout});
+			  			//    }
+			  			//});
+			  			//var arr = d.split(/\s+/);
+			  			//var comm = arr[0].trim();
+			  			//var opts = (arr.length > 1) ? [arr.slice(1).join(" ")] : [];
+			  			snmp_process = exec(d,  {maxBuffer: bufferMult*snmpBufferSize});
+			  		    snmp_process.stdout.on('data', function(dat) {
+			  				socket.emit("snmp_track", {count:data.length, input:d, output:dat});
+			  			});
+			  			snmp_process.stderr.on('data', function(dat) {
+			  			    logger.error('exec error: ' + dat);
+			  			    socket.emit("app_error", dat);
+			  			    socket.emit("snmp_track", {count:data.length, input:d, error:dat});
+			  			});
+			  			snmp_process.on('close', function(code) {
+			  				logger.info("closing the process with code: " + code);
+			  			});
 		  			 } catch (e) {
+		  				 console.log("error");
 		  				 logger.error(e.message);
 		  				 //console.log(e);
 		  			 }	 
@@ -544,6 +593,22 @@ function socketConnect(socket) {
   });
   
   socket.on("snmp_stop", function() {
+	  if(!!snmp_process) {
+		  var isWin = /^win/.test(process.platform);
+		  if(!isWin) {
+		      kill(snmp_process.pid);
+		  } else {
+		      exec('taskkill /PID ' + snmp_process.pid + ' /T /F', function (error, stdout, stderr) {
+		          // console.log('stdout: ' + stdout);
+		          // console.log('stderr: ' + stderr);
+		          if(error !== null) {
+		                console.log('kill error: ' + error);
+		          }
+		      });             
+		  }
+	  }
+	  
+		  kill(snmp_process.pid);
 	  snmp_running = false;
 	  socket.emit("snmp_stop");
   });

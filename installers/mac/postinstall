@@ -4,7 +4,7 @@ prefix=$(which node 2>/dev/null | sed "s|/bin/.*||")
 dir="$prefix/lib/node_modules/snmpsniffer"
 cd $prefix
 echo "Installing plugins..."
-sudo "$prefix/bin/npm" install -g lib/node_modules/snmpsniffer
+sudo NODE_ENV=production "$prefix/bin/npm" install -g lib/node_modules/snmpsniffer
 export SNMPSNIFFER_HOME="$dir"
 
 echo "Checking the application data directory..."
