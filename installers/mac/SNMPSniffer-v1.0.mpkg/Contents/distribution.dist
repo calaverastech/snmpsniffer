@@ -39,9 +39,9 @@ function pm_install_check() {
 <choice id='uninstall' title='uninstall'>
         <pkg-ref id='com.calaverastech.snmpsniffer.uninstall.pkg'/>
     </choice>
-<pkg-ref id='com.calaverastech.snmpsniffer.app.pkg' version='v' auth='Root'>file:./Contents/Packages/snmpsnifferapp.pkg</pkg-ref>
-<pkg-ref id='com.calaverastech.snmpsniffer.command.pkg' version='v' auth='Root'>file:./Contents/Packages/snmpsniffercommand.pkg</pkg-ref>
-<pkg-ref id='com.calaverastech.snmpsniffer.lib.pkg' version='v' auth='Root'>file:./Contents/Packages/snmpsnifferlib.pkg</pkg-ref>
-<pkg-ref id='com.calaverastech.snmpsniffer.postflight.pkg' version='v' auth='Root'>file:./Contents/Packages/snmpsnifferpostflight.pkg</pkg-ref>
-<pkg-ref id='com.calaverastech.snmpsniffer.uninstall.pkg' version='v' auth='Root'>file:./Contents/Packages/snmpsnifferuninstall.pkg</pkg-ref>
+<pkg-ref id='com.calaverastech.snmpsniffer.app.pkg' version='v1.0' auth='Root'>file:./Contents/Packages/snmpsnifferapp.pkg</pkg-ref>
+<pkg-ref id='com.calaverastech.snmpsniffer.command.pkg' version='v1.0' auth='Root'>file:./Contents/Packages/snmpsniffercommand.pkg</pkg-ref>
+<pkg-ref id='com.calaverastech.snmpsniffer.lib.pkg' version='v1.0' auth='Root'>file:./Contents/Packages/snmpsnifferlib.pkg</pkg-ref>
+<pkg-ref id='com.calaverastech.snmpsniffer.postflight.pkg' version='v1.0' auth='Root'>file:./Contents/Packages/snmpsnifferpostflight.pkg</pkg-ref>
+<pkg-ref id='com.calaverastech.snmpsniffer.uninstall.pkg' version='v1.0' auth='Root'>file:./Contents/Packages/snmpsnifferuninstall.pkg</pkg-ref>
 </installer-script>

@@ -3,15 +3,15 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleIdentifier</key>
-	<string>com.calaverastech.snmpsniffer.postflight.pkg</string>
+	<string>com.calaverastech.snmpsniffer.lib.pkg</string>
 	<key>CFBundleShortVersionString</key>
-	<string></string>
+	<string>1.0</string>
 	<key>IFMajorVersion</key>
-	<integer>0</integer>
+	<integer>1</integer>
 	<key>IFMinorVersion</key>
 	<integer>0</integer>
 	<key>IFPkgFlagDefaultLocation</key>
-	<string>/usr/local/bin</string>
+	<string>/usr/local/lib/node_modules/snmpsniffer</string>
 	<key>IFPkgFlagRelocatable</key>
 	<false/>
 	<key>IFPkgFlagRootVolumeOnly</key>
