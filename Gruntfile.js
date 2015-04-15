@@ -32,12 +32,34 @@ module.exports = function(grunt) {
                 src: "coverage/lcov.info"
             }
         },
+        watch: {
+        	scripts: {
+        	  files: ['**/*.js'],
+        	  tasks: ['start'],
+        	  options: {
+        	    spawn: false
+        	  }
+        	}
+        }
     });
 
     grunt.loadNpmTasks("grunt-coveralls");
     grunt.loadNpmTasks("grunt-mocha-test");
     grunt.loadNpmTasks("grunt-contrib-jshint");
     grunt.loadNpmTasks("grunt-mocha-istanbul");
+    
+    //grunt.loadNpmTasks('grunt-nodemon');
+    //grunt.loadNpmTasks('grunt-contrib-watch');
+    //grunt.loadNpmTasks('grunt-contrib-connect');
+    //grunt.loadNpmTasks('grunt-connect-socket.io');
+    
+    //grunt.registerTask('start', 'Start server', function() {
+    //	grunt.util.spawn({
+    //		cmd: 'echo',
+    //		args: ['"hello"']
+    //	});
+    //	grunt.task.run('watch');
+	//});
 
     //The travis ci build
     grunt.registerTask("travis", ["jshint", "mocha_istanbul:coverage", "coveralls:src"]);

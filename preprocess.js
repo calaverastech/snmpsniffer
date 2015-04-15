@@ -6,7 +6,7 @@ var argv = require('minimist')(process.argv.slice(2)),
 	os = require('os'),
 	_ = require('underscore');	
 	
-var allowed = ["help", "version", "chrome", "firefox", "nobrowser", "no-browser", "log-file"];
+var allowed = ["help", "version", "chrome", "firefox", "nobrowser", "browser", "log-file"];
 
 
 exports.preprocess = function(port) {
@@ -46,7 +46,7 @@ exports.preprocess = function(port) {
 		runfirefox,
 		ostype = os.type();
 	
-	if(!argv['no-browser'] && !argv['nobrowser']) {
+	if(!argv['no-browser'] && !!argv['browser'] && !argv['nobrowser']) {
 		var runchrome,
 		runfirefox,
 		ostype = os.type();

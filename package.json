@@ -38,6 +38,7 @@
     	"socket.io-client": "1.3.x"
   },
   "scripts": {
-  	"test": "grunt"
+  	"test": "grunt",
+  	"start": "sudo node server.js --nobrowser --log-file 'console'"
   }
 }
