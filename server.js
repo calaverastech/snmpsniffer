@@ -366,7 +366,7 @@ app.use(express.static(__dirname + '/public/js'));
 app.use(express.static(__dirname + '/node_modules/socket.io/node_modules/socket.io-client'));
 
 app.get('/', function(req, res){
-	var interfaces = require('os').networkInterfaces();
+	var interfaces = os.networkInterfaces();
 	var home = getUserHome() + ((ostype == 'Windows_NT')?"\\":"/" + PCAP_DATA_DIR);
 	res.render('index', {interfaces: interfaces, home:home});
 });
