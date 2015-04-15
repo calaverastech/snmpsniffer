@@ -5,6 +5,7 @@ node_js:
    - "0.10"
 before_script:
    - npm install -g grunt-cli
+   - echo "interfaces"
    - ifconfig -a
    - npm start &
 before_install:
