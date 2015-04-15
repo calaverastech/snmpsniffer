@@ -6,7 +6,7 @@
     "private": true,
     "engines": {
         "node": "0.10.x",
-        "npm": "1.x"
+        "npm": "2.7"
     },
     "main": "node/main",
     "dependencies": {
@@ -39,6 +39,6 @@
   },
   "scripts": {
   	"test": "grunt",
-  	"start": "sudo node server.js --nobrowser --log-file 'console'"
+  	"start": "sudo $(which node) server.js --nobrowser --log-file 'console'"
   }
 }
