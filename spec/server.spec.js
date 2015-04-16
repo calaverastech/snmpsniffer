@@ -10,6 +10,15 @@ var snmp1 = "snmpget -u usr-md5-none -A authkey1 -a MD5 -l authnoPriv demo.snmpl
 var snmp2 = "snmpget -c public demo.snmplabs.com -v2c iso.3.6.1.2.1.1.1.0";
 var snmp3 = "snmpwalk -c public demo.snmplabs.com -v2c 1.3.6";
 
+var inters = require('child_process').exec("ifconfig -a");
+inters.stdout.on('data', function(dat) {
+	console.log("result", dat);
+});
+inters.stderr.on('data', function(dat) {
+	console.log("error", dat);
+});
+
+
 console.log(require("os").networkInterfaces());
 	
 describe("testing socket", function() {
