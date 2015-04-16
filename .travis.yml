@@ -8,3 +8,4 @@ before_script:
    - npm start &
 before_install:
    - sudo apt-get install libpcap-dev
+   - sudo ifconfig eth0 up
