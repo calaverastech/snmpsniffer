@@ -5,22 +5,16 @@ var _ = require('underscore');
 var socketURL = 'http://0.0.0.0:5000';
 var options = { transports: ['websocket'],
                 'force new connection': true };
-var filter = {inter: 'eth0', filename:'', bufferMult:1, options:{}, responses_only:true};
+
+var inters = require("os").networkInterfaces();
+var inter = _(inters).has("eth0")? "eth0": "venet0";
+
+var filter = {inter: inter, filename:'', bufferMult:1, options:{}, responses_only:true};
 var snmp1 = "snmpget -u usr-md5-none -A authkey1 -a MD5 -l authnoPriv demo.snmplabs.com -v3 iso.3.6.1.2.1.1.4.0  iso.3.6.1.2.1.1.9.1.3.1 iso.3.6.1.2.1.2.2.1.1.1 iso.3.6.1.2.1.2.2.1.5.1 -e 0x80004fb805636c6f75644dab22cc";
 var snmp2 = "snmpget -c public demo.snmplabs.com -v2c iso.3.6.1.2.1.1.1.0";
 var snmp3 = "snmpwalk -c public demo.snmplabs.com -v2c 1.3.6";
 
-var inters = require('child_process').exec("ifconfig -a");
-inters.stdout.on('data', function(dat) {
-	console.log("result", dat);
-});
-inters.stderr.on('data', function(dat) {
-	console.log("error", dat);
-});
 
-
-console.log(require("os").networkInterfaces());
-	
 describe("testing socket", function() {
 	it("should sniff 3 packets after pressing 'Start'", function(done) {
 		var socket = io.connect(socketURL, options);

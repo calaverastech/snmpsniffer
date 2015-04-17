@@ -46,7 +46,7 @@ exports.preprocess = function(port) {
 		runfirefox,
 		ostype = os.type();
 	
-	if(!argv['no-browser'] && !!argv['browser'] && !argv['nobrowser']) {
+    if(!argv['no-browser'] && !argv['nobrowser']  && (argv['browser'] != false && argv['browser'] != 'false')) {
 		var runchrome,
 		runfirefox,
 		ostype = os.type();

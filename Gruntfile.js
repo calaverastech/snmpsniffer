@@ -1,6 +1,9 @@
 module.exports = function(grunt) {
     var src = ["*.js"];
-    var tests = ["spec/**/*.spec.js"];
+    //var tests = ["spec/**/*.spec.js"];
+    var tests_local = ["spec/**/*-local.spec.js"];
+    var tests_demo = ["spec/**/*-demo.spec.js"];
+    var tests = [];
     var supportingFiles = ["Gruntfile.js"];
     //var allJs = tests.concat(src);
     var allJs = tests;
@@ -15,7 +18,7 @@ module.exports = function(grunt) {
         },
         mochaTest: {
             test: {
-                src: allJs,
+                src: allJs
             }
         },
         mocha_istanbul: {
@@ -42,7 +45,7 @@ module.exports = function(grunt) {
         	}
         }
     });
-
+    
     grunt.loadNpmTasks("grunt-coveralls");
     grunt.loadNpmTasks("grunt-mocha-test");
     grunt.loadNpmTasks("grunt-contrib-jshint");
@@ -69,4 +72,13 @@ module.exports = function(grunt) {
 
     //Just run grunt for day to day work
     grunt.registerTask("default", ["jshint", "mochaTest:test"]);
+    
+    grunt.registerTask('mochaLocal', 'Local jshint tests', function() {
+            grunt.config('mochaTest.test.src', tests_local);
+            grunt.task.run('mochaTest:test');
+    });
+    
+    //Grunt local machine
+    grunt.registerTask('local', ["jshint", "mochaLocal"]);
+    
 };
