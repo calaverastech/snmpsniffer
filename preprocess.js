@@ -17,7 +17,7 @@ exports.preprocess = function(port) {
 	}
 	
 	if(!!argv.help) {
-		console.log("Usage: " + pkg['name'] + " [options]");
+		console.log("Usage: " + pkg.name + " [options]");
 		console.log("       where options include:");
 		console.log("");
 		console.log("--version                          Application version");
@@ -31,27 +31,23 @@ exports.preprocess = function(port) {
 		console.log("                                   'console' for console)");
 		process.exit();
 	} else if(!!argv.version) {
-		console.log(pkg["name"] + " v." + pkg["version"]);
+		console.log(pkg.name + " v." + pkg.version);
 		process.exit();
 	} else {
 		//check node version
 		var nodever = process.version;
-		var jsonver = pkg["engines"]["node"];
+		var jsonver = pkg.engines.node;
 		if(!semver.satisfies(nodever, ">=" + jsonver)) {
 			console.log("The required node version is at least " + jsonver + "; but your node version is " + nodever + ". Please, update your node version");
 			process.exit(1);
 		}	
 	}
-	var runchrome,
-		runfirefox,
-		ostype = os.type();
-	
-    if(!argv['no-browser'] && !argv['nobrowser']  && (argv['browser'] != false && argv['browser'] != 'false')) {
-		var runchrome,
+    if(!argv.nobrowser && ((argv.browser === undefined || !!argv.browser) && argv.browser !== 'false')) {
+    	var runchrome,
 		runfirefox,
 		ostype = os.type();
 		if(ostype == 'Linux') {
-			runchrome = "google-chrome --user-data-dir='' --new-window http://localhost:"+port;
+			runchrome = "google-chrome --no-sandbox --user-data-dir='' --new-window http://localhost:"+port;
 			runfirefox = "firefox -new-window http://localhost:"+port;
 		} else if(ostype == 'Windows_NT') {
 			runchrome = "chrome.exe --new-window http://localhost:"+port;
@@ -81,7 +77,4 @@ exports.preprocess = function(port) {
 	
 	return argv._;
 	
-}
-	
-
-
+};

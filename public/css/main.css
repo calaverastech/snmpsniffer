@@ -55,8 +55,16 @@ input[type='button'] {
 	border:1px solid #999999;
 	margin: 0 5px 0 5px;
 }
+.buttonlist {
+	display: inline-block;
+}
+.buttonlist li {
+	display: inline;
+	list-style-type: none;
+	padding-right: 5px;
+}
 .dialoglabel {
-	width:100px;
+	width:140px;
 	display:inline-block;
 	text-align:right;
 }

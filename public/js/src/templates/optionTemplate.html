@@ -1,0 +1,5 @@
+<%= ip %><%= (port.length == 0)?'':(":"+port) %>
+<input type='checkbox' name = 'src' class='src' value='<%= src %>' <%= src ? 'checked' : "" %>> src </input>
+<input type='checkbox' name = 'dst' class='dst' value='<%= dst %>' <%= dst ? 'checked' : "" %>> dst </input>
+<div class='action'><span class='ui-icon ui-icon-pencil edit-option' style='position:relative;' title='edit'/></div>
+<div class='action'><span class='ui-icon ui-icon-trash remove-option' title ='remove'/></div>

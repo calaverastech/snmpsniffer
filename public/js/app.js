@@ -1,165 +1,53 @@
-var socket;
+require.config({
+  paths: {
+    jquery: 'lib/jquery/jquery-1.11.1.min',
+    jqueryui: 'lib/jquery/jquery-ui.min',
+    underscore: 'lib/underscore-min',
+    backbone: 'lib/backbone-min',
+    'backbone.localStorage': 'lib/backbone.localStorage-min',
+    socketio: 'socket.io',
+    //infrastructure: "infrastructure"
+    templates: 'src/templates'
+  },
+  underscore: {
+      exports: "_"
+  },
+  backbone: {
+      deps: ['underscore', 'jquery'],
+      exports: 'Backbone'
+  },
+  'backbone.localStorage': {
+	  deps: ['backbone'],
+	  exports: 'Backbone'
+  },
+  shim: {
+	    'socketio': {
+	      exports: 'io'
+		}
+  }
+});
 
-$(document).ready(function () {
-	
+require( [ "infrastructure" ], function () {
+
+require([
+  // Load our app module and pass it to our definition function
+  'src/backbone-app',
+  'socketio',
+  'src/backbone-help/help'
+
+], function(App, io, help){
+  // The "app" dependency is passed in as "App"
+  // Again, the other dependencies passed in are not "AMD" therefore don't pass a parameter to this function
+  
+
+	var socket;
+
 	socket = io.connect('/', {'reconnection delay':900000});
 	if(!window.chrome) {
 		$("#exit").hide();
 	}
 	
-    //Backbone
-    window.App = {
-	  Models: {},
-	  Collections: {},
-	  Views: {}
-	};
-    
-    var defaults = {ip: null, src: false, dst: false, port: null, ports: []};
-    var snmp_count = 0;
-    
-	App.Models.Opt = Backbone.Model.extend({
-		defaults: defaults,
-	    //initialize: function(attributes){
-		//	console.log('initializing...');
-		//	attributes.ports = _(attributes.port.split(",")).map(function(p) {
-		//		return p.trim();
-		//	});
-	    //    Backbone.Model.prototype.initialize.apply(this, arguments);
-	    //},
-		set: function(attributes, options) {
-			if(!!attributes.port) {
-				attributes.ports = _.chain(attributes.port.split(",")).map(function(p) {
-					return p.trim();
-				}).compact().value();
-			}
-			return Backbone.Model.prototype.set.apply(this, arguments);
-		},
-		validate: function(attributes, options) {
-			//console.log("validating...", attributes, options);
-			//hack to prevent second validation
-			if(_.chain(options).omit("validate", "collection").isEmpty().value()){
-				//console.log("really validating...");
-				if((!attributes.ip || attributes.ip.length == 0) && (!attributes.port || attributes.port.length == 0)) {
-					return "You have to specify either ip or port";
-				}
-				if(!attributes.src && !attributes.dst) {
-					return "This data needs to be either source or destination";
-				}
-				//new record
-				if(!!options.collection && this.collection.contains(attributes)) {
-					return "The ip and port(s) are already on the list";
-				}
-			}
-		},
-		edit: function(attr) {
-			this.save(attr);
-		}
-		
-	});
-	
-	
-	App.Collections.Opts = Backbone.Collection.extend({
-		model: App.Models.Opt,
-		localStorage: new Backbone.LocalStorage("options-backbone"),
-		contains: function(attr) {
-			return this.some(function(opt) {
-				var ports = opt.get('ports');
-				return (opt.get('ip') === attr.ip) && (_(ports).isEmpty() || ports.some(function(p) {
-						var re = new RegExp("(\,\s*)?"+p+"(\s*\,)?");
-						return attr.port.match(re);
-				}));
-			});
-		}
-	
-	
-	});
-	
-	function fill_dialog(attributes) {
-		if(!attributes) {
-			$("#dialog_form > #id").val("0");
-			$("#dialog_form > input[type='checkbox']").prop("checked", true);
-		} else {
-			$.each(attributes, function(key, value){
-				$('[name='+key+']', "#dialog_form").val(value);
-			});
-			$("#dialog_form > input[type='checkbox']").prop("checked", function() {
-				return attributes[$(this).attr("name")];
-			});
-		}
-    };
-	
-	App.Views.OptionView = Backbone.View.extend({
-		  tagName: 'li',
-		  template: _.template($("#option_template").html()),
-		  initialize: function() {
-            this.listenTo(this.model, 'change', this.render);
-            this.listenTo(this.model, 'remove', this.remove);
-	   	  },
-	   	  events: {
-			"click .remove-option": "removeOpt",
-			"click .edit-option": "showDialog",
-			"click .src,.dst": "toggleCheckbox"
-	   	  },
-		  showDialog: function () {
-		   	  fill_dialog(this.model.attributes);
-			  $("#add_dialog").dialog("open");
-		  },
-	   	  removeOpt: function() {
-			 if(confirm("Are you sure, you want to remove this option?")) {
-				 this.model.destroy();
-			 }
-	   	  },
-	   	  toggleCheckbox: function(ev) {
-	   		  ev.preventDefault();
-	   		  var checkbox = $(ev.currentTarget);
-	   		  var options = {};
-	   		  options[$(checkbox).attr("name")] = $(checkbox).is(":checked");
-	   		  this.model.save(options, {validate:true});
-	   	  },
-	   	  render: function(attr, options) {
-	   		if(!options || !!options.validate) {
-	   			this.$el.html( this.template(this.model.toJSON()));
-	   			this.$el.find("span.ui-icon").tooltip();
-	   			return this;
-	   		}
-	   	  },
-	   	  remove: function(){
-	   	      this.$el.remove(); 
-	   	  }
-	});
-	
-	App.Views.AppView = Backbone.View.extend({
-		el: $("#option_field"),
-		initialize: function () {
-			this.opts = new App.Collections.Opts( null, { view: this });
-			this.opts.on('invalid', function(data, err) {
-				alert(err);
-			});
-			this.listenTo(this.opts, "add", this.addLi);
-		    this.opts.fetch();
-		    this.render();
-		},
-		events: {
-			"click #add_option":  "showDialog"
-		},
-		showDialog: function () {
-			fill_dialog();
-			$("#add_dialog").dialog("open");
-		},
-		addModel: function(attr) {
-			return this.opts.create(attr, {validate: true});
-		},
-		addLi: function (model) {
-			var optionView = new App.Views.OptionView({model: model});
-			this.$el.find("#option_list").append(optionView.render().el);
-		},
-		setModel: function(id, data) {
-			return this.opts.get(id).save(data, {validate: true});
-		}
-		
-	});
-	
-	var appview = new App.Views.AppView;
+	App.initialize();
 	
 	window.onbeforeunload = closeWindow;
 	$("#exit").on("click", function() {
@@ -181,7 +69,7 @@ $(document).ready(function () {
 	});
 	
 
-	$("#option_field > button").tooltip();
+	$("#option_field").find("button").tooltip();
 	var wid = $("#content").width()/2;
 	//console.log(Math.max(wid, 600));
     $("#option_list").resizable({  maxWidth: Math.max($("#content").width()/5, 500) });
@@ -200,30 +88,6 @@ $(document).ready(function () {
     resizeToWidth($("#pcap_output"), Math.min(4*wid/5, 600));
     resizeToWidth($("#option_list"), Math.min($("#content").width()/5, 500));
     
-    //function resizeWin(wid1, wid2) {
-    //	resizeToWidth($("#commands"), wid1);
-    //	resizeToWidth($("#snmp_output"), wid1);
-    //	resizeToWidth($("#pcap_output"), wid1);
-    //	resizeToWidth($("#option_list"), wid2);
-    //}
-    
-    //resizeWin($("#content").width()/3, $("#content").width()/5);
-    
-    //$(window).resize(function() {
-    //	resizeWin($("#content").width()/3, $("#content").width()/5);
-    //});
-    
-    
-    function get_form_data(form, data) {
-    	var fields = (!data) ? {} : data;
-   	    $(form).serialize().split("&").forEach(function(par) {
-		    var item = par.split("=");
-		    if(item.length >= 2) {
-		    	fields[item[0]] = decodeURIComponent(item[1]).replace(/\+/g, "");
-		    }
-		});
-   	    return fields;
-    }
     
     $("#log").dialog({
 	      modal: true,
@@ -245,75 +109,14 @@ $(document).ready(function () {
     	$("#log").dialog("open");
     });
     
-	$("#add_dialog").dialog({ autoOpen: false, modal: true, width: 460, buttons: [{text: "Submit", click: function(e) {
-		        var e = e || window.event;
-		 		if (typeof e.stopPropagation != "undefined") {
-		 			e.stopPropagation();
-		 		} else {
-		 			e.cancelBubble = true;
-		 		}
-		        e.preventDefault();
-		        var model;
-		    	var fields = _.clone(defaults);
-		    	get_form_data($("#dialog_form"), fields);
-				var id = fields['id'];
-				if(id == '0') {
-					model = appview.addModel(_.omit(fields, "id"));
-				} else {
-					model = appview.setModel(id, fields);
-				} 
-				if(!!model && !model.validationError) {
-					$(this).dialog("close");
-				} 
-			}
-		}, {text: "Cancel", click: function() {
-				$(this).dialog("close");
-			}
-		}],
-		create: function() {
-		  $("#add_dialog").keypress(function(e) {
-		    if ($(this).dialog("isOpen") && e.keyCode == $.ui.keyCode.ENTER) {
-		      $(this).parent().find("button:eq(1)").trigger("click");
-			  return false;
-		    }
-		  });
-		},
-		close: function() {
-			$('#add_option').blur();
-		}
-	});
-	$("#remove_all").on("click", function() {
-		$("#remove_all").blur();
-		if(appview.opts.length > 0) {
-			if(confirm("Are you sure, you want to remove all items?")) {
-				appview.opts.each(function(opt) {
-					if(!!opt)
-						opt.destroy();
-				});
-				appview.opts.reset();
-			}
-		}	
-	});
-	
-	function show_hide_options(hide) {
-		if(hide) {
-			$('#show_options').text("Show Options");
-			$("#pcap_options").hide();
-		} else {
-			$('#show_options').text("Hide Options");
-			$("#pcap_options").show();
-		}
-	}
-	
-	show_hide_options(appview.opts.length == 0);
-	
+
 	$('#show_options').on("click", function() {
-		show_hide_options($("#pcap_options").is(":visible"));
+		help.show_hide_options($("#pcap_options").is(":visible"));
 	});
 	
 	function clearList(l) {
 		$(l).find("li").remove();
-	};
+	}
 	
 
 	$("#pcap_clear").on("click", function() {
@@ -368,15 +171,15 @@ $(document).ready(function () {
 	function add_pcap_entry(data) {
 		var packet = data.packet;
 		if(!!packet) {
-			var str = packet['timestamp'] + " " + packet['version'] + " " + packet['ip'] + " " + packet['command'] + " id=" + packet['reqid'];
+			var str = packet.timestamp + " " + packet.version + " " + packet.ip + " " + packet.command + " id=" + packet.reqid;
 			var oid_str = _(packet.oids).map(function(oid) {
 				return oid.oid + ((!!oid.type) ? (" " + oid.type + "=" + oid.data) : "");
 			}).join(", ");
 			if(_(packet.oids).size() > 1)
 				oid_str = " [ " + oid_str + " ] ";
 			str += oid_str;
-			if(packet["status"] !== "0")
-				str += "error: " + packet["status"];
+			if(packet.status !== "0")
+				str += "error: " + packet.status;
 			var cl = (packet.command === "Response") ? "res":"req";
 			add_output($("#pcap_output"), str, cl, (data.responses_only && packet.command !== "Response"));
 		}
@@ -403,12 +206,12 @@ $(document).ready(function () {
 	socket.on("pcap_file_overwrite", function(data) {
 		var data1 = data.data;
 		if(confirm("The file already exists, overwrite it?")) {
-			data1['newfilename'] = data.newfilename;
+			data1.newfilename = data.newfilename;
 		} else {
 			$("#filename").val("");
-			data1['newfilename'] = null;
+			data1.newfilename = null;
 		} 
-		data1["checked"] = true;
+		data1.checked = true;
 		socket.emit("pcap_start", data1);
 	});
 
@@ -469,3 +272,5 @@ $(document).ready(function () {
 	});
 	
 });
+});
+

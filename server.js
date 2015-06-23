@@ -1,4 +1,8 @@
 #!/usr/bin/env node
+
+/*jshint browser: true, loopfunc: true, laxcomma: true, immed: true, latedef: true, undef: true, regexdash: false */
+/*global require, module,  __dirname, LOG_FILE, BROWSER */
+
 var fs = require('fs'),
     path = require('path'),
 	os = require('os'),
@@ -22,6 +26,7 @@ var Hex = require("./hex.js");
 var Base64 = require("./base64.js");
 var ASN1 = require("./asn1.js");
 var log4js = require('log4js');
+var logger;
 
 var PORT = process.env.PORT || 5000;
 
@@ -159,16 +164,16 @@ function decoded_data(asn1) {
     var content = asn1.content();
     if (content !== null) {
         content = String(content); // it might be a number
-        dec['value'] = content;
-        dec['tag'] = asn1.tag;
+        dec.value = content;
+        dec.tag = asn1.tag;
     }
     if (asn1.sub !== null) {
-    	dec['sub'] = [];
+    	dec.sub = [];
         for (var i = 0, max = asn1.sub.length; i < max; ++i)
-            dec['sub'].push(decoded_data(asn1.sub[i]));
+            dec.sub.push(decoded_data(asn1.sub[i]));
     }
     return dec;
- };
+ }
  
  function decoded_pdu(asn1) {
 	 
@@ -177,7 +182,7 @@ function decoded_data(asn1) {
 			if(_(s).isArray()) {
 				for(var i=0; i<s.length; i++) {
 					var pdu = find_pdu(s[i]);
-					if(pdu != null)
+					if(pdu !== null)
 						return pdu;
 				}
 			} else if(!!s.tag && !!s.tag.command) {
@@ -191,17 +196,17 @@ function decoded_data(asn1) {
 	 
 	 var pdu = {};
 	 var dec = decoded_data(asn1);
-	 if(dec['head'].trim() === "SEQUENCE") {
-		 var sub = dec['sub'];
+	 if(dec.head.trim() === "SEQUENCE") {
+		 var sub = dec.sub;
 		 if(!!sub && sub.length >= 3) {
 			 var version = sub[0];
-			 if(version['head'].trim() === "INTEGER") {
+			 if(version.head.trim() === "INTEGER") {
 				 var ver,
 				 	command,
-				    requid,
+				    reqid,
 				 	status,
 				 	oids = [];
-				 switch(version['value']) {
+				 switch(version.value) {
 				 	case '0': ver = "v1"; break;
 				 	case '1': ver = "v2c"; break;
 				 	case '3': ver  = "v3"; break;
@@ -209,25 +214,25 @@ function decoded_data(asn1) {
 				 } 
 				 var pdu_seq = find_pdu(sub.slice(1));
 				 if(!!pdu_seq && !!pdu_seq.sub && pdu_seq.sub.length >= 3) {
-					command = pdu_seq.tag['command'];
+					command = pdu_seq.tag.command;
 					var pdu_sub = pdu_seq.sub;
-					if(pdu_sub[0]['head'].trim() === "INTEGER")
-						reqid = pdu_sub[0]['value'];
-					if(pdu_sub[1]['head'].trim() === "INTEGER") {
-						status = pdu_sub[1]['value'];
+					if(pdu_sub[0].head.trim() === "INTEGER")
+						reqid = pdu_sub[0].value;
+					if(pdu_sub[1].head.trim() === "INTEGER") {
+						status = pdu_sub[1].value;
 					}
 					var index = 3;
 					while(oids.length === 0 && index < pdu_sub.length) {
-						if(pdu_sub[index]['head'].trim() === "SEQUENCE" && !!pdu_sub[index]['sub'] && pdu_sub[index]['sub'].length > 0) {
-							var seq_sub = pdu_sub[index]['sub'];
+						if(pdu_sub[index].head.trim() === "SEQUENCE" && !!pdu_sub[index].sub && pdu_sub[index].sub.length > 0) {
+							var seq_sub = pdu_sub[index].sub;
 							seq_sub.forEach(function(d) {
-								if(d['head'].trim() === "SEQUENCE" && !!d['sub'] && d['sub'].length > 0) {
-									var data_sub = d['sub'];
-									if(data_sub[0]['head'].trim() === "OBJECT IDENTIFIER") {
-										var oid = {oid: data_sub[0]['value']};
-										if(!!data_sub[1] && data_sub[1]['head'] !== "NULL") {
-											oid['type'] = data_sub[1]['head'];
-											oid['data'] = data_sub[1]['value'];
+								if(d.head.trim() === "SEQUENCE" && !!d.sub && d.sub.length > 0) {
+									var data_sub = d.sub;
+									if(data_sub[0].head.trim() === "OBJECT IDENTIFIER") {
+										var oid = {oid: data_sub[0].value};
+										if(!!data_sub[1] && data_sub[1].head !== "NULL") {
+											oid.type = data_sub[1].head;
+											oid.data = data_sub[1].value;
 										} 
 										oids.push(oid);
 									}
@@ -237,11 +242,11 @@ function decoded_data(asn1) {
 						index++;
 					}
 					if(oids.length > 0) {
-						pdu["version"] = ver;
-						pdu["command"] = command;
-						pdu["reqid"] = reqid;
-						pdu["oids"] = oids;
-						pdu["status"] = status;
+						pdu.version = ver;
+						pdu.command = command;
+						pdu.reqid = reqid;
+						pdu.oids = oids;
+						pdu.status = status;
 					}
 				 }
 			 }
@@ -321,7 +326,6 @@ var app = express()
 
 
 preprocessor.preprocess(PORT);
-var logger;
 if(!!LOG_FILE  && LOG_FILE.trim() === "console") {
 	logger = log4js.getLogger();
 } else {
@@ -400,15 +404,6 @@ if(!!BROWSER) {
 	});
 }
 
-io.sockets.on('connection', socketConnect);
-
-process.on('exit', function(code) {
-  if(!!writer)
-	  writer.end();
-  //logger.info('About to exit with code:', code);
-  console.log('About to exit with code:', code);
-});
-
 function socketConnect(socket) {
   logger.info('client socket '+socket.id+" connected");
   //console.log('client socket '+socket.id+" connected");
@@ -457,7 +452,7 @@ function socketConnect(socket) {
 			  var ipstr = "";
 			  if(opt.ip.length > 0) { 
 				ipstr = ((direction.length > 0) ? direction : (opt.ip.match(IP4CIDRRegex) ? " net " : " host ")) + opt.ip;
-			  };
+			  }
 			  var portstr = stringifyPorts(opt.ports, direction, savedports);
 			  if(ipstr.length > 0 && portstr.length > 0) {
 				  portstr = " and ( " + portstr + " ) ";
@@ -470,10 +465,10 @@ function socketConnect(socket) {
   
   socket.on("pcap_start", function(data) {
 	  var filename = getUserFile(PCAP_DATA_DIR, data.filename);
-	  if(!data['checked'] && checkfile(filename)) {
+	  if(!data.checked && checkfile(filename)) {
 		  socket.emit("pcap_file_overwrite", {data:data, newfilename:filename});
 	  } else {
-		  filename = data['newfilename'] || filename;
+		  filename = data.newfilename || filename;
 		  responses_only = data.responses_only;
 		  now = (new Date()).getTime();
 		  var options = data.options;
@@ -498,11 +493,11 @@ function socketConnect(socket) {
 						  var pdu = decoded_pdu(asn1);
 						  //console.log(util.inspect(pdu, {depth: null}));
 						  if(!!pdu.oids && pdu.oids.length > 0) {
-							  pdu['timestamp'] = timestamp;
-							  if(pdu['command'] === 'Response') {
-								  pdu['ip'] = _(packet.payload.payload.saddr).values().join(".");
+							  pdu.timestamp = timestamp;
+							  if(pdu.command === 'Response') {
+								  pdu.ip = _(packet.payload.payload.saddr).values().join(".");
 							  } else {
-								  pdu['ip'] = _(packet.payload.payload.daddr).values().join(".");
+								  pdu.ip = _(packet.payload.payload.daddr).values().join(".");
 							  }
 							  write(pdu);
 							  socket.emit("pcap_track", {packet: pdu, responses_only:responses_only});
@@ -517,7 +512,7 @@ function socketConnect(socket) {
 			  logger.error(err);
 			  //console.log(err);
 			  var msg = err.toString();
-			  if(msg.indexOf("socket:") == 0)
+			  if(msg.indexOf("socket:") === 0)
 				  msg += ". You need to run the program as an administrator.";
 			  socket.emit("app_error", msg);
 		  }
@@ -631,9 +626,11 @@ function socketConnect(socket) {
   
 }
   
+io.sockets.on('connection', socketConnect);
 
-
-
-
-	
-	
+process.on('exit', function(code) {
+  if(!!writer)
+	  writer.end();
+  //logger.info('About to exit with code:', code);
+  console.log('About to exit with code:', code);
+});	

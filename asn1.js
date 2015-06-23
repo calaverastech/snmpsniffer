@@ -16,6 +16,7 @@
 
 /*jshint browser: true, strict: true, immed: true, latedef: true, undef: true, regexdash: false */
 /*global oids */
+/*global require, module,  __dirname */
 (function (undefined) {
 "use strict";
 
@@ -146,7 +147,7 @@ Stream.prototype.parseInteger = function (start, end) {
     if (len > 4) {
         s = v;
         len <<= 3;
-        while (((s ^ pad) & 0x80) == 0) {
+        while (((s ^ pad) & 0x80) === 0) {
             s <<= 1;
             --len;
         }
@@ -274,6 +275,7 @@ ASN1.prototype.typeName = function () {
     	case 0x07: return "Uinteger32";
     	default: return "Application_" + this.tag.tagNumber.toString();
     	}
+    	break;
     case 2: return "[" + this.tag.tagNumber.toString() + "]"; // Context
     case 3: return "Private_" + this.tag.tagNumber.toString();
     }
@@ -394,7 +396,7 @@ function ASN1Tag(stream) {
     	case 0xA6: this.command = "Inform";break;
     	case 0xA7: this.command = "Snmpv2-Trap";break;
     	//case 0xA8: this.command = "Report";break;
-    };
+    }
     if (this.tagNumber == 0x1F) { // long tag
         var n = new Int10();
         do {

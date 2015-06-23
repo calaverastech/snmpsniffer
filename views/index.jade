@@ -1,17 +1,22 @@
 extends layout
 
 block head
-	script(type="text/javascript", src="/backbone-min.js")
-	script(type="text/javascript", src="/backbone.localStorage-min.js")
-	script(type="text/javascript", src="/socket.io.js")
-	script(type="text/javascript", src="/app.js")
+	//script(type="text/javascript", src="/backbone-min.js")
+	//script(type="text/javascript", src="/backbone.localStorage-min.js")
+	//script(type="text/javascript", src="/socket.io.js")
+	//script(type="text/javascript", src="/app.js")
+	//script(type="text/rocketscript", data-rocketsrc="/require.min.js", data-main="/app", data-rocketoptimized="true")
+	| <script data-main="/app" src="/lib/require.min.js"></script>
 	script(type="text/template", id="option_template")
 		<%= ip %><%= (port.length == 0)?'':(":"+port) %>
 		<input type='checkbox' name = 'src' class='src' value='<%= src %>' <%= src ? 'checked' : "" %>> src </input>
 		<input type='checkbox' name = 'dst' class='dst' value='<%= dst %>' <%= dst ? 'checked' : "" %>> dst </input>
 		<div class='action'><span class='ui-icon ui-icon-pencil edit-option' style='position:relative;' title='edit'/></div>
 		<div class='action'><span class='ui-icon ui-icon-trash remove-option' title ='remove'/></div>
-
+	//script(type="text/template", id="option_buttons_template")
+	//	<li><button id="add_option" class="ui-icon ui-icon-plusthick" style="display:inline-block;width:21px;height:21px;margin-top:10px;" title="Add an option" /></li>
+	//	<li><button id="remove_all" class="ui-icon ui-icon-trash" style="display:inline-block;height:21px;width:21px;margin-left:10px;margin-top:10px;" title="Remove All")
+		
 block heading 
 	h2(style="display:inline-block") SNMP Sniffer
 	input#exit(type="button", value="Exit", style="display:inline-block;margin-left:30px;width:160px;background-color:lightblue")
@@ -42,7 +47,7 @@ block content
 				button#add_option.ui-icon.ui-icon-plusthick(style="display:inline-block;width:21px;height:21px;margin-top:10px;", title="Add an option")
 				button#remove_all.ui-icon.ui-icon-trash(style="display:inline-block;height:21px;width:21px;margin-left:10px;margin-top:10px;", title="Remove All")
 				#options_message(style="font-size:smaller;padding-left:5px;display:inline-block;width:200px;")
-				//button#refresh.ui-icon.ui-icon-refresh(style="display:inline-block;height:21px;width:21px;height:40px;margin-left:10px;", title="Refresh")
+					//button#refresh.ui-icon.ui-icon-refresh(style="display:inline-block;height:21px;width:21px;height:40px;margin-left:10px;", title="Refresh")
 		div(style="display:inline-block;vertical-align:top;")
 			label Store in File (optional):
 		//input#fileupload(type="file")
