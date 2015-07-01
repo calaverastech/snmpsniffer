@@ -10,6 +10,8 @@ module.exports = function(grunt) {
     var supportingFiles = ["Gruntfile.js"];
     var allJs = tests.concat(src);
     
+    var HOME = 	process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
+    
     //var rjs_build = grunt.file.read('public/build.js').trim().slice(1,-1);
     //rjs_build = JSON.parse(rjs_build.replace(/(?:\r\n|\r|\n)/g, ""));
 	/*jshint -W106 */
@@ -62,7 +64,7 @@ module.exports = function(grunt) {
         	 }
         },
         copy: {
-        	server_copy: {
+        	serverCopy: {
         	    //src: ['preprocess.js', 'int10.js', 'hex.js', 'base64.js', 'asn1.js', 'server.js'],
         		src: ['server.js', 'asn1.js', 'preprocess.js'],
         	    dest: 'tmp/',
@@ -75,14 +77,27 @@ module.exports = function(grunt) {
           			}
         		}
         	},
-        	server_copy_back: {
+        	serverCopyBack: {
         		cwd: "tmp", 
         		src: ["*.min.js"],
         		dest: ".",
         		expand: true
+        	},
+        	folderCopy: {
+		        expand: true
         	}
-        	
         },
+    	foldersCopy: {
+            config_folders: {
+    			scriptsFolder: "scripts",
+    			projectsFolder: "projects"
+    		},
+    		result_folders: {
+    			appFolder: "app",
+    			installersFolder: "installers",
+    			packagesFolder: "packages"
+    		}
+    	},
         uglify: {
         	libs: {
     	    	mangle: true,
@@ -115,7 +130,29 @@ module.exports = function(grunt) {
         		cmd: ["rm -rf tmp"]
         	}
         },
-        
+        gitadd: {
+        	task: {
+        		options: {
+        			all: true
+        		}
+        	}
+        },
+        gitcommit: {
+        	task: {
+        		options: {
+        			message: "New Build "+ grunt.template.today('mmmm dd, yyyy'),
+        			allowEmpty: true
+        		}
+        	}
+        },
+        gitpush: {
+        	origin_master: {
+        		options: {
+        			remote: 'origin',
+        			branch: 'master'
+        		}
+        	}
+        },
         //commands: {
         //	modify_server: {
         //		cmd: ["mkdir tmp", "cd tmp", "./grunt-modify-server"]
@@ -144,7 +181,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-commands');
-    grunt.loadNpmTasks("grunt-then");
+    grunt.loadNpmTasks('grunt-git');
     
     //grunt.loadNpmTasks('grunt-nodemon');
     //grunt.loadNpmTasks('grunt-contrib-watch');
@@ -181,35 +218,81 @@ module.exports = function(grunt) {
     });
     
     
-    grunt.registerTask("uglifyServer", function() {
+    grunt.registerTask("uglifyServer", "Uglify server files", function() {
     	grunt.task.run("commands:mkdir_tmp");
-    	grunt.task.run('copy:server_copy');
+    	grunt.task.run('copy:serverCopy');
     	grunt.task.run("uglify");
     });
     
-    grunt.registerTask("copyMinServer", function() {
-		grunt.task.run('copy:server_copy_back');
+    grunt.registerTask("copyMinServer", "Copy uglified server files", function() {
+		grunt.task.run('copy:serverCopyBack');
 		grunt.task.run('commands:rm_tmp');
     });
     
-    grunt.registerTask("minify", ["uglifyServer", "copyMinServer"]);
+    grunt.registerTask("minify", "Minify javascript files", ["requirejs:compile", "uglifyServer", "copyMinServer"]);
+    
+    grunt.registerMultiTask("foldersCopy", function() {
+    	var copyos = "/" + (!!grunt.option("copyos") ? grunt.option("copyos"):"**");
+    	var srcdir = (!!grunt.option("relativesrc") ? (HOME + "/") : "") + grunt.option("srcdir");
+    	var destdir = (!!grunt.option("relativedest") ? (HOME + "/") : "") + grunt.option("destdir");
+    	grunt.config("copy.folderCopy.cwd", srcdir);
+    	grunt.config("copy.folderCopy.dest", destdir);
+    	var srcs = [];
+    	if(this.args.length > 0) {
+    		srcs.push(this.args[0] + copyos + "/*");
+    	} else {
+	    	for(var key in this.data) {
+	    		srcs.push(this.data[key] + copyos + "/*");
+	    	}
+    	}
+    	grunt.config("copy.folderCopy.src", srcs);
+    	//console.log("func", grunt.config("copy.folderCopy"));
+    	grunt.task.run("copy:folderCopy");
+    });
+    
+    grunt.registerTask("gitProjects", "New build for projects", ["gitadd", "gitcommit", "gitpush:origin_master"]);
+    
+    //grunt foldersCopy:config_folders:src:dest
+    
+
+ //   grunt.registerTask("copyFolder", function() {
+ //   	grunt.config("copy.folder_copy.cwd", grunt.option("src") + "/" + grunt.option("dir"));
+ //   	grunt.config("copy.folder_copy.dest", grunt.option("dest") + "/" + grunt.option("dir"));
+ //   	grunt.task.run("copy:folder_copy");
+ //   });
+    
+ //   grunt.registerMultiTask("copyFolders", function(src, dest, folders) {
+ //   	grunt.option("src", src);
+ //   	grunt.option("dest", dest);
+ //   	var foldnames = eval("grunt."+folders);
+ //   	foldnames.forEach(function(d) {
+ //       	grunt.option("dir", d);
+ //       	grunt.task.run("copyFolder");
+ //   	});
+ //   });
+    	
+ //   grunt.registerMultiTask("copyResults", function(src, dest) {
+ //   	grunt.option("src", src);
+ //   	grunt.option("dest", dest);
+ //   	grunt.option("dir", grunt.result_folders.data);
+ //   	grunt.task.run("copyFolder");
+ //   });
     
     
-//    grunt.registerTask("minify", function() {
-//    	grunt.task.run("requirejs:compile");
+ //   grunt.registerTask("minify", function() {
+ //   	grunt.task.run("requirejs:compile");
 //		grunt.task.run("commands:mkdir_tmp");
-//		grunt.task.run('copy:server_copy');
+//		grunt.task.run('copy:serverCopy');
 //    	grunt.task.run("uglify");
-//    	grunt.task.run('copy:server_copy_back');
+//    	grunt.task.run('copy:serverCopyBack');
 //    	grunt.task.run('commands:rm_tmp');
 //    });
     
     
-    grunt.registerTask('karmaDist', 'Karma tests for minified frontend', function() {
-    	grunt.config('karma.unit.options.basePath', 'public/dist');
-    	grunt.task.run("karma:unit");
-    });
-    
+//    grunt.registerTask('karmaDist', 'Karma tests for minified frontend', function() {
+//    	grunt.config('karma.unit.options.basePath', 'public/dist');
+//    	grunt.task.run("karma:unit");
+//    });
 
     //Grunt local machine
     //grunt.registerTask('local', ["jshintLocal", "minify", "mochaLocal", "karma:unit"]);
