@@ -130,6 +130,24 @@ module.exports = function(grunt) {
         		cmd: ["rm -rf tmp"]
         	}
         },
+        compress: {
+        	linux: {
+        		options: {
+        			mode: "tgz",
+        			dest: "packages/linux/",
+        			ext: ".tar.gz"
+        		},
+        		files: [ 
+        		         {
+	        		        src: ["icons/**", "LICENSE/**/*.txt", "public/css/**", "public/dist/**/*.js", "views/*", "LICENSE*", "README.txt", "package.json", "*.min.js"]
+        		         },
+        		         {
+        		        	 src: ["installers/linux/*"], flatten: true, expand: true
+        		         }
+        		         
+        			   ]
+        	}
+        },
         gitadd: {
         	task: {
         		options: {
@@ -180,6 +198,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-commands');
     grunt.loadNpmTasks('grunt-git');
     
@@ -252,42 +271,17 @@ module.exports = function(grunt) {
     
     grunt.registerTask("gitProjects", "New build for projects", ["gitadd", "gitcommit", "gitpush:origin_master"]);
     
-    //grunt foldersCopy:config_folders:src:dest
-    
-
- //   grunt.registerTask("copyFolder", function() {
- //   	grunt.config("copy.folder_copy.cwd", grunt.option("src") + "/" + grunt.option("dir"));
- //   	grunt.config("copy.folder_copy.dest", grunt.option("dest") + "/" + grunt.option("dir"));
- //   	grunt.task.run("copy:folder_copy");
- //   });
-    
- //   grunt.registerMultiTask("copyFolders", function(src, dest, folders) {
- //   	grunt.option("src", src);
- //   	grunt.option("dest", dest);
- //   	var foldnames = eval("grunt."+folders);
- //   	foldnames.forEach(function(d) {
- //       	grunt.option("dir", d);
- //       	grunt.task.run("copyFolder");
- //   	});
- //   });
-    	
- //   grunt.registerMultiTask("copyResults", function(src, dest) {
- //   	grunt.option("src", src);
- //   	grunt.option("dest", dest);
- //   	grunt.option("dir", grunt.result_folders.data);
- //   	grunt.task.run("copyFolder");
- //   });
-    
-    
- //   grunt.registerTask("minify", function() {
- //   	grunt.task.run("requirejs:compile");
-//		grunt.task.run("commands:mkdir_tmp");
-//		grunt.task.run('copy:serverCopy');
-//    	grunt.task.run("uglify");
-//    	grunt.task.run('copy:serverCopyBack');
-//    	grunt.task.run('commands:rm_tmp');
-//    });
-    
+    grunt.registerTask("packageLinux", "Create application archive for Linux", function() {
+    	var filename = grunt.option("archive") + grunt.config("compress.linux.options.ext");
+    	var files = grunt.config.get("compress.linux.files");
+    	files.forEach(function(f) {
+    		f.dest = grunt.option("archive");
+    	});
+    	grunt.config("compress.linux.files", files);
+    	grunt.config("compress.linux.options.archive", grunt.config("compress.linux.options.dest") + filename);
+    	//console.log(grunt.config("compress.linux"));
+    	grunt.task.run("compress:linux");
+    });  
     
 //    grunt.registerTask('karmaDist', 'Karma tests for minified frontend', function() {
 //    	grunt.config('karma.unit.options.basePath', 'public/dist');
