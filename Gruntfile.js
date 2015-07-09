@@ -251,7 +251,8 @@ module.exports = function(grunt) {
     grunt.registerTask("minify", "Minify javascript files", ["requirejs:compile", "uglifyServer", "copyMinServer"]);
     
     grunt.registerMultiTask("foldersCopy", function() {
-    	var copyos = "/" + (!!grunt.option("copyos") ? grunt.option("copyos"):"**");
+    	var copyos = "/" + ((!!grunt.option("copyos") && (grunt.option("destdir") != "app")) ? (grunt.option("copyos") + "/**"):"**");
+    	console.log(copyos);
     	var srcdir = (!!grunt.option("relativesrc") ? (HOME + "/") : "") + grunt.option("srcdir");
     	var destdir = (!!grunt.option("relativedest") ? (HOME + "/") : "") + grunt.option("destdir");
     	grunt.config("copy.folderCopy.cwd", srcdir);
@@ -265,11 +266,11 @@ module.exports = function(grunt) {
 	    	}
     	}
     	grunt.config("copy.folderCopy.src", srcs);
-    	//console.log("func", grunt.config("copy.folderCopy"));
+        console.log("func", grunt.config("copy.folderCopy"));
     	grunt.task.run("copy:folderCopy");
     });
     
-    grunt.registerTask("gitProjects", "New build for projects", ["gitadd", "gitcommit", "gitpush:origin_master"]);
+    grunt.registerTask("gitProjects", "New build", ["gitadd", "gitcommit", "gitpush:origin_master"]);
     
     grunt.registerTask("packageLinux", "Create application archive for Linux", function() {
     	var filename = grunt.option("archive") + grunt.config("compress.linux.options.ext");
