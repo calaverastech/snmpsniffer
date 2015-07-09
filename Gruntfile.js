@@ -251,7 +251,7 @@ module.exports = function(grunt) {
     grunt.registerTask("minify", "Minify javascript files", ["requirejs:compile", "uglifyServer", "copyMinServer"]);
     
     grunt.registerMultiTask("foldersCopy", function() {
-    	var copyos = "/" + ((!!grunt.option("copyos") && (grunt.option("destdir") != "app")) ? (grunt.option("copyos") + "/**"):"**");
+    	var copyos = "/" + (!!grunt.option("copyos") ? (grunt.option("copyos") + "/**"):"**");
     	console.log(copyos);
     	var srcdir = (!!grunt.option("relativesrc") ? (HOME + "/") : "") + grunt.option("srcdir");
     	var destdir = (!!grunt.option("relativedest") ? (HOME + "/") : "") + grunt.option("destdir");
@@ -259,10 +259,10 @@ module.exports = function(grunt) {
     	grunt.config("copy.folderCopy.dest", destdir);
     	var srcs = [];
     	if(this.args.length > 0) {
-    		srcs.push(this.args[0] + copyos + "/*");
+    		srcs.push(this.args[0] + ((this.args[0] == "app") ? "" : copyos) + "/*");
     	} else {
 	    	for(var key in this.data) {
-	    		srcs.push(this.data[key] + copyos + "/*");
+	    		srcs.push(this.data[key] + ((this.data[key] == "app") ? "" : copyos) + "/*");
 	    	}
     	}
     	grunt.config("copy.folderCopy.src", srcs);
