@@ -47,7 +47,7 @@ require([
 		$("#exit").hide();
 	}
 	
-	App.initialize();
+	App.initialize(socket);
 	
 	window.onbeforeunload = closeWindow;
 	$("#exit").on("click", function() {
@@ -114,29 +114,15 @@ require([
 		help.show_hide_options($("#pcap_options").is(":visible"));
 	});
 	
-	function clearList(l) {
-		$(l).find("li").remove();
-	}
-	
-
 	$("#pcap_clear").on("click", function() {
 		if($("#pcap_output").html().length > 0 && confirm("Are you sure?"))
-			clearList($("#pcap_output"));
+			help.clearList($("#pcap_output"));
 	});
 	$("#snmp_clear").on("click", function() {
 		if($("#snmp_output").html().length > 0 && confirm("Are you sure?"))
-			clearList($("#snmp_output"));
+			help.clearList($("#snmp_output"));
 	});
 	
-	$("#start_pcap").on("click", function() {
-		  if($(this).val() == "Stop") {
-			  socket.emit("pcap_stop");
-		  } else {
-			  clearList($("#pcap_output"));
-			  var options = appview.opts.toJSON();
-			  socket.emit("pcap_start", {inter:$("#interface").val(), filename:$("#filename").val(), bufferMult:$("#buffer").val(), options:options, responses_only:$("#responses_only").is(":checked")});
-		  }
-	});
 	$("#responses_only").on("change", function() {
 		if($(this).is(":checked")) {
 			$("#pcap_output > li.req").hide();
@@ -236,7 +222,7 @@ require([
 			} else {
 				$(this).val("Cancel");
 				$("#snmp_loading").show();
-				clearList($("#snmp_output"));
+				help.clearList($("#snmp_output"));
 				snmp_count = 0;
 				socket.emit("snmp_start", {data: commands, bufferMult: $("#buffer").val()});
 			}

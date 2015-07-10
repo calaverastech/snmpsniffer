@@ -146,11 +146,12 @@ module.exports = function(grunt) {
         		options: {
         			mode: "tgz",
         			dest: "packages/linux/",
-        			ext: ".tar.gz"
+        			ext: ".tar.gz",
+        			expand: true
         		},
         		files: [ 
         		         {
-	        		        src: ["icons/**", "LICENSE/**/*.txt", "public/css/**", "public/dist/**/*.js", "views/*", "LICENSE*", "README.txt", "package.json", "*.min.js"]
+	        		        src: ["icons/**", "LICENSE/**", "public/css/**", "public/dist/**/*.js", "public/dist/**/*.html", "views/*", "LICENSE*.txt", "README*.txt", "package.json", "*.min.js"]
         		         },
         		         {
         		        	 src: ["installers/linux/*"], flatten: true, expand: true
@@ -270,7 +271,7 @@ module.exports = function(grunt) {
     
     grunt.registerMultiTask("foldersCopy", function() {
     	var copyos = !!grunt.option("copyos") ? ("/" + grunt.option("copyos")):"";
-    	console.log(copyos);
+    	//console.log(copyos);
     	var srcdir = (!!grunt.option("relativesrc") ? (HOME + "/") : "") + grunt.option("srcdir");
     	var destdir = (!!grunt.option("relativedest") ? (HOME + "/") : "") + grunt.option("destdir");
     	grunt.config("copy.folderCopy.cwd", srcdir);
@@ -287,7 +288,7 @@ module.exports = function(grunt) {
     	if(!!grunt.option("clean")) {
     		grunt.task.run("cleanAll:"+destdir);
     	}
-        console.log("func", grunt.config("copy.folderCopy"));
+        //console.log("func", grunt.config("copy.folderCopy"));
     	grunt.task.run("copy:folderCopy");
     });
     

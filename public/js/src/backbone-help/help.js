@@ -38,6 +38,8 @@ define([
 				$('#show_options').text("Hide Options");
 				$("#pcap_options").show();
 			}
+		}, clearList: function (l) {
+			$(l).find("li").remove();
 		}
 	}
 	

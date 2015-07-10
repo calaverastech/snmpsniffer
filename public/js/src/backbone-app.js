@@ -4,9 +4,9 @@ define([
   'backbone',
   '../src/router', // Request router.js
 ], function($, _, Backbone, Router){
-  var initialize = function(){
+  var initialize = function(socket){
     // Pass in our Router module and call it's initialize function
-    Router.initialize();
+    Router.initialize(socket);
   };
 
   return { 

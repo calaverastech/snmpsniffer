@@ -14,7 +14,7 @@ define([
     }
   });
   
-  var initialize = function(){
+  var initialize = function(socket){
 
     var app_router = new AppRouter;
     
@@ -60,8 +60,19 @@ define([
 		    }
 	    });
         
+	     $("#start_pcap").on("click", function() {
+			  if($(this).val() == "Stop") {
+				  socket.emit("pcap_stop");
+			  } else {
+				  help.clearList($("#pcap_output"));
+				  var options = optView.opts.toJSON();
+				  socket.emit("pcap_start", {inter:$("#interface").val(), filename:$("#filename").val(), bufferMult:$("#buffer").val(), options:options, responses_only:$("#responses_only").is(":checked")});
+			  }
+		});
+        
         optView.render();
     });
+    
     
 
     Backbone.history.start();
