@@ -89,8 +89,12 @@ module.exports = function(grunt) {
         },
         clean: {
         	build: {
-        		src: ["app/*.app", "installers/mac/*.dmg","installers/mac/*.mpkg", "packages/**/.tar.gz"],
-        		expand: true
+        		src: ["app/*.app", "installers/mac/*.dmg","installers/mac/*.mpkg", "packages/**/*.tar.gz"],
+        		expand: true,
+        		options: {
+        			force: true
+        		}
+        
         	}
         
         },
@@ -260,13 +264,8 @@ module.exports = function(grunt) {
     
     grunt.registerTask("cleanAll", "Remove files", function(destdir) {
     	grunt.config("clean.build.cwd", destdir);
+    	console.log(grunt.config("clean.build"));
     	grunt.task.run("clean:build");
-    	//var dirs = grunt.config.get("clean.build");
-    	//dirs.forEach(function(d) {
-    	//	d = destdir + "/" + d;
-    	//});
-    	//grunt.config("clean.build", dirs);
-    	
     });
     
     grunt.registerMultiTask("foldersCopy", function() {
