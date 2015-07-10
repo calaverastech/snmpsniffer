@@ -87,6 +87,13 @@ module.exports = function(grunt) {
 		        expand: true
         	}
         },
+        clean: {
+        	build: {
+        		src: ["app/*.app", "installers/mac/*.dmg","installers/mac/*.mpkg", "packages/**/.tar.gz"],
+        		expand: true
+        	}
+        
+        },
     	foldersCopy: {
             config_folders: {
     			scriptsFolder: "scripts",
@@ -199,6 +206,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-compress');
+    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-commands');
     grunt.loadNpmTasks('grunt-git');
     
@@ -250,6 +258,17 @@ module.exports = function(grunt) {
     
     grunt.registerTask("minify", "Minify javascript files", ["requirejs:compile", "uglifyServer", "copyMinServer"]);
     
+    grunt.registerTask("cleanAll", "Remove files", function(destdir) {
+    	grunt.config("clean.build.cwd", destdir);
+    	grunt.task.run("clean:build");
+    	//var dirs = grunt.config.get("clean.build");
+    	//dirs.forEach(function(d) {
+    	//	d = destdir + "/" + d;
+    	//});
+    	//grunt.config("clean.build", dirs);
+    	
+    });
+    
     grunt.registerMultiTask("foldersCopy", function() {
     	var copyos = !!grunt.option("copyos") ? ("/" + grunt.option("copyos")):"";
     	console.log(copyos);
@@ -266,6 +285,9 @@ module.exports = function(grunt) {
 	    	}
     	}
     	grunt.config("copy.folderCopy.src", srcs);
+    	if(!!grunt.option("clean")) {
+    		grunt.task.run("cleanAll:"+destdir);
+    	}
         console.log("func", grunt.config("copy.folderCopy"));
     	grunt.task.run("copy:folderCopy");
     });
