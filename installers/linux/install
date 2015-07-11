@@ -57,7 +57,7 @@ if [ ! -d "$HOME/.snmpsniffer/config"  ]; then
 fi
 
 echo "Creating a launcher..."
-sudo mv -f "$dir/snmpsniffer" "$prefix/bin/snmpsniffer"
+sudo mv -f "$dir/bin/linux/snmpsniffer" "$prefix/bin/snmpsniffer"
 sudo chmod 755 "$prefix/bin/snmpsniffer"
 
 echo "Copying icons..."
@@ -73,7 +73,7 @@ xdg-icon-resource install --novendor --size 256 icons/snmp_sniffer256x256.png sn
 
 echo "Creating an application menu item..."
 if [ ! -d "$prefix/share/applications" ]; then sudo mkdir "$prefix/share/applications"; fi
-sudo mv -f "$dir/snmpsniffer.desktop" "$prefix/share/applications"
+sudo mv -f "$dir/bin/linux/snmpsniffer.desktop" "$prefix/share/applications"
 xdg-desktop-menu install --novendor "$prefix/share/applications/snmpsniffer.desktop"
 echo "Installation finished"
 

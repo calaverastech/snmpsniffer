@@ -151,10 +151,10 @@ module.exports = function(grunt) {
         		},
         		files: [ 
         		         {
-	        		        src: ["icons/**", "LICENSE/**", "public/css/**", "public/dist/**", "!public/dist/**/*.txt", "public/dist/**/*.html", "views/*", "LICENSE*.txt", "README*.txt", "package.json", "*.min.js"]
+	        		        src: ["bin/linux/*", "icons/**", "LICENSE/**", "public/css/**", "public/dist/**", "!public/dist/**/*.txt", "public/dist/**/*.html", "views/*", "LICENSE*.txt", "README*.txt", "package.json", "*.min.js"]
         		         },
         		         {
-        		        	 src: ["installers/linux/*", "bin/linux/*"], flatten: true, expand: true
+        		        	 src: ["installers/linux/*"], flatten: true, expand: true
         		         }
         			   ]
         	}
