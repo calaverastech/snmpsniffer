@@ -1,0 +1,42 @@
+#!/bin/sh
+
+echo "WARNING: npm plugins installed by the application will be removed as well, if you need them, install separately".
+uninst="N"
+echo "Would you like to continue with the uninstallation? Y/N [N]"
+read uninst
+if [ $uninst != "Y" ] && [ $uninst != "y" ]; then exit 1; fi
+prefix=$(which node 2>/dev/null | sed "s|/bin/.*||")
+echo "Removing the application..."
+sudo rm -rf "$prefix/lib/node_modules/snmpsniffer"
+sudo rm "$prefix/bin/snmpsniffer"
+echo "Removing shortcuts..."
+xdg-desktop-icon uninstall snmpsniffer.desktop
+xdg-desktop-menu uninstall snmpsniffer.desktop
+
+echo "Removing icons..."
+xdg-icon-resource uninstall --size 16 snmpsniffer
+xdg-icon-resource uninstall --size 22 snmpsniffer
+xdg-icon-resource uninstall --size 24 snmpsniffer
+xdg-icon-resource uninstall --size 32 snmpsniffer
+xdg-icon-resource uninstall --size 48 snmpsniffer
+xdg-icon-resource uninstall --size 64 snmpsniffer
+xdg-icon-resource uninstall --size 128 snmpsniffer
+xdg-icon-resource uninstall --size 256 snmpsniffer
+
+echo "Removing the launcher..."
+sudo rm "$prefix/share/applications/snmpsniffer.desktop"
+echo "The application is uninstalled"
+
+#removenode="N"
+#echo "Would you like to completely uninstall Nodejs? Y/N [N]. WARNING: before removing it, make sure it's not used by other applications"
+#read removenode
+#if [ $removenode = "Y" ] || [ $removenode = "y" ]; then
+#	cd $prefix
+#	sudo rm -r bin/node lib/node share/man/man1/node.1
+#fi
+echo "Please, remove any remaining panel shortcuts."
+echo "The application data will remain installed in the $HOME/.snmpsniffer folder. If you want to remove it, do it manually"
+
+
+
+
