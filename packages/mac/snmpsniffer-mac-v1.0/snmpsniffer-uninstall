@@ -1,0 +1,22 @@
+#!/bin/sh
+
+echo "WARNING: npm plugins installed by the application will be removed as well, if you need them, install separately".
+uninst="N"
+echo "Would you like to continue with the uninstallation? Y/N [N]"
+read uninst
+if [ $uninst != "Y" ] && [ $uninst != "y" ]; then exit 1; fi
+prefix=$(which node 2>/dev/null | sed "s|/bin/.*||")
+echo "Removing the application..."
+sudo rm -rf "$prefix/lib/node_modules/snmpsniffer"
+sudo rm "$prefix/bin/snmpsniffer"
+
+echo "Removing the launcher..."
+sudo rm -rf /Applications/SNMPSniffer.app
+echo "The application is uninstalled"
+
+echo "Please, remove any remaining desktop and dock shortcuts."
+echo "The application data will remain installed in the /home/[username]/.snmpsniffer folder. If you want to remove it, do it manually"
+
+
+
+
