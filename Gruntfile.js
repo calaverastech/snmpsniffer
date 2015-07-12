@@ -85,6 +85,9 @@ module.exports = function(grunt) {
         	},
         	folderCopy: {
 		        expand: true
+        	},
+        	macCopy: {
+        		expand: true
         	}
         },
         clean: {
@@ -108,6 +111,37 @@ module.exports = function(grunt) {
     			installersFolder: "installers",
     			packagesFolder: "packages"
     		}
+    	},
+    	packageMacCopy: {
+    		libCopy: {
+    			src: ["icons/**", "LICENSE/**", "public/css/**", "public/dist/**", "!public/dist/**/*.txt", "views/*", "LICENSE*.txt", "README*.txt", "package.json", "*.min.js"],
+    			dest: "snmpsnifferlib"
+    		},
+			commandCopy: {
+    			src: ["bin/mac/*"],
+    			dest: "snmpsniffercomm"
+    		},
+			postflightCopy: {
+    			src: ["installers/mac/postinstall", "installers/mac/checknode.sh"],
+    			dest: "snmpsnifferpostflight"
+    		},
+			uninstallCopy: {
+    			src: ["installers/mac/snmpsniffer-uninstall"],
+    			dest: "snmpsnifferuninstall"
+			},
+			appCopy: {
+				dest: "snmpsnifferapp"
+			}
+			
+    	},
+    	exec: {
+    		createMacApp: {
+    			cmd: function(cwd, ver, dest) {
+    				'mkdir -p app && /usr/local/bin/platypus -A -y -o "Text Window" -i ' + cwd + '/icons/snmpsniffer.icns -V ' + ver + ' -u "CalaverasTech.com" -I com.calaverastech.Snmpsniffer ' + cwd + '/bin/mac/snmpsniffer ' + dest + '/app/SNMPSniffer.app'	
+    			},
+    			stdout: true
+    		}
+    	
     	},
         uglify: {
         	libs: {
@@ -151,7 +185,7 @@ module.exports = function(grunt) {
         		},
         		files: [ 
         		         {
-	        		        src: ["bin/linux/*", "icons/**", "LICENSE/**", "public/css/**", "public/dist/**", "!public/dist/**/*.txt", "public/dist/**/*.html", "views/*", "LICENSE*.txt", "README*.txt", "package.json", "*.min.js"]
+	        		        src: ["bin/linux/*", "icons/**", "LICENSE/**", "public/css/**", "public/dist/**", "!public/dist/**/*.txt", "views/*", "LICENSE*.txt", "README*.txt", "package.json", "*.min.js"]
         		         },
         		         {
         		        	 src: ["installers/linux/*"], flatten: true, expand: true
@@ -169,7 +203,7 @@ module.exports = function(grunt) {
         gitcommit: {
         	task: {
         		options: {
-        			message: "New Build "+ grunt.template.today('mmmm dd, yyyy'),
+        			message: "New Build "+ grunt.template.today('mmmm dd h:MM TT, yyyy'),
         			allowEmpty: true
         		}
         	}
@@ -212,6 +246,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-commands');
+    grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-git');
     
     //grunt.loadNpmTasks('grunt-nodemon');
@@ -304,6 +339,17 @@ module.exports = function(grunt) {
     	//console.log(grunt.config("compress.linux"));
     	grunt.task.run("compress:linux");
     });  
+    
+    grunt.registerMultiTask("packageMacCopy", "Copy mac files for package", function() {
+    	if(this.target === "appCopy") {
+    		grunt.task.run("exec:createMacApp:"+grunt.option("cwd") + ":" + grunt.option("version") + ":" + this.data.dest);
+    		this.data.src = ["app/SNMPSniffer.app"];
+    	}
+    	grunt.config("copy.macCopy.cwd", grunt.option("cwd"));
+    	grunt.config("copy.macCopy.src", this.data.src);
+    	grunt.config("copy.macCopy.dest", grunt.option("dest") + "/" + this.data.dest);
+    });
+    
     
 //    grunt.registerTask('karmaDist', 'Karma tests for minified frontend', function() {
 //    	grunt.config('karma.unit.options.basePath', 'public/dist');
