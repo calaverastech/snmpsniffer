@@ -1,0 +1,57 @@
+#!/usr/bin/env sh
+
+dir=$(dirname $0)
+tempfoo=$(basename $1)
+tempd=$(mktemp -d /tmp/$tempfoo.XXXX) || exit 1
+arch="snmpsniffer*.tgz"
+cp -f $dir/$arch $tempd
+cp -f $dir/preinstall-script $tempd
+chmod -R 777 $tempd
+
+ERROR=$(osascript <<EOF
+    tell application "Terminal"
+        activate
+        set w to do script "sh $tempd/preinstall-script $tempd $arch"
+        delay 1
+        try
+            repeat
+                delay 0.1
+                if busy of w then exit repeat
+            end repeat
+            repeat
+                delay 0.1
+                if not busy of w then exit repeat
+            end repeat
+        on error errorMsg number errorNumber
+            -- display dialog "Cannot install plugins, exiting"
+            return "Error"
+        end try
+        tell front window to set theText to contents of selected tab as text
+    end tell
+    -- display dialog theText
+    -- tell application "Terminal" to close window 1
+    set scriptError to ""
+    try
+        set scriptError to do shell script "echo " & quoted form of theText & " | egrep -o '[[:space:]]ERR![[:space:]]'"
+    on error errorMsg number errorNumber
+        -- ignore
+    end try
+    -- display dialog scriptError
+    return scriptError
+EOF)
+
+#while [ -e $tempd ];do
+#    sleep 1
+#done
+
+#error=$(npm list -g snmpsniffer 1>/dev/null)
+
+#echo "error $ERROR"
+
+if [ -n "$ERROR" ];then 
+    #echo "failure"
+    exit 1
+else
+    #echo "success"
+    exit 0
+fi

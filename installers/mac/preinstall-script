@@ -1,0 +1,57 @@
+#!/usr/bin/env sh
+
+tempd=$1
+
+path=$tempd/$2
+
+red=$(tput setaf 1)
+normal=$(tput sgr0)
+
+#if [ ! -r $path ];then
+#sudo rm -rf $tempd
+#    printf "\n${red}The library path doesn't exist, exiting\n${normal}"
+#exit 1
+#fi
+
+ver=$(npm list -g snmpsniffer 2>/dev/null | egrep -o '([[:digit:]]+[[:punct:]]){2}[[:digit:]]')
+
+reinst="Y"
+if [ "x$ver" != "x" ];then
+    printf "\nThe snmpsniffer plugin version $ver is already installed. Would you like to reinstall it Y/N [Y]?"
+    read reinst
+fi
+
+if [ $reinst == "y" ] || [ $reinst == "Y" ];then
+    echo "Installing snmpsniffer plugin..."
+    RESULT=$(sudo NODE_ENV=production npm install -g $path --color=always 3>&1 1>&2 2>&3 | tee /dev/stderr)
+fi
+
+ERROR=$(echo $RESULT | sed $'s,\x1b\\[[0-9;]*[a-zA-Z],,g' | sed "s/.*[[:space:]]WARN[[:space:]].*//g")
+
+
+sudo rm -rf $tempd
+
+if [ -n "$ERROR" ];then
+    printf "\n${red}There was an installation error${normal}. You can close the window.\n"
+    exit 1
+fi
+
+newver=$(npm list -g snmpsniffer 2>/dev/null | egrep -o '([[:digit:]]+[[:punct:]]){2}[[:digit:]]')
+
+if [ -z $newver ];then
+    printf "\n${red}Plugin snmpsniffer is not installed, there was probably an error\n${normal}"
+    exit 1
+fi
+
+echo "Checking the application data directory..."
+if [ ! -d "$HOME/.snmpsniffer"  ]; then
+	mkdir "$HOME/.snmpsniffer"
+	cp -R $dir/files/* "$HOME/.snmpsniffer"
+	if [ ! -d "$HOME/.snmpsniffer/license" ]; then mkdir "$HOME/.snmpsniffer/license"; fi
+fi
+
+printf '\nPlugin installation finished, you can close the window\n'
+
+exit 0
+
+

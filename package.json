@@ -23,6 +23,7 @@
     "ps-tree": "0.0.3"
   },
   "devDependencies": {
+  	"lodash": "^3.10.x",
     "expect.js": "^0.3.1",
     "should": "^5.0.0",
     "sinon": "^1.14.1",
@@ -53,6 +54,10 @@
     "grunt-contrib-clean": "^0.6.x",
     "grunt-commands": "^0.1.x",
     "grunt-exec": "^0.4.6",
+    "grunt-run": "^0.2.x",
+    "grunt-plistbuddy": "^0.1.x",
+    "grunt-chmod": "^1.x",
+    "grunt-xmlpoke": "^0.8.x",
     "grunt-git": "^0.3.x"
   },
   "scripts": {

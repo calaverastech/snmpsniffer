@@ -25,14 +25,8 @@ do
 done
 
 if [ "x$cur" = "x" ];then
-    err=$(npm list -g snmpsniffer 1> /dev/null)
-    if [ -n "$err" ];then
-        echo "The library is not installed"
-        exit 1
-    fi
-    lib=$(npm list -g snmpsniffer | head -n1)
-    export SNMPSNIFFER_HOME="$lib/node_modules/snmpsniffer"
-    cd $SNMPSNIFFER_HOME
+    echo "The application is not found"
+    exit 1
 fi
 
 echo "Wait, the application is starting..."
