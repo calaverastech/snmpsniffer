@@ -23,23 +23,28 @@ fi
 
 if [ $reinst == "y" ] || [ $reinst == "Y" ];then
     echo "Installing snmpsniffer plugin..."
-    RESULT=$(sudo NODE_ENV=production npm install -g $path --color=always 3>&1 1>&2 2>&3 | tee /dev/stderr)
+    prefix=$(which node 2>/dev/null | sed "s|/bin/.*||")
+    if [ -w $prefix/lib/node_modules ];then
+	RESULT=$(NODE_ENV=production npm install -g $path --color=always 3>&1 1>&2 2>&3 | tee /dev/stderr)
+    else
+    	RESULT=$(sudo NODE_ENV=production npm install -g $path --color=always 3>&1 1>&2 2>&3 | tee /dev/stderr)
+    fi
 fi
 
 ERROR=$(echo $RESULT | sed $'s,\x1b\\[[0-9;]*[a-zA-Z],,g' | sed "s/.*[[:space:]]WARN[[:space:]].*//g")
 
 
-sudo rm -rf $tempd
+#sudo rm -rf $tempd
 
 if [ -n "$ERROR" ];then
-    printf "\n${red}There was an installation error${normal}. You can close the window.\n"
+    printf "\n${red}There was an installation error${normal}. Close the window to continue.\n"
     exit 1
 fi
 
 newver=$(npm list -g snmpsniffer 2>/dev/null | egrep -o '([[:digit:]]+[[:punct:]]){2}[[:digit:]]')
 
 if [ -z $newver ];then
-    printf "\n${red}Plugin snmpsniffer is not installed, there was probably an error\n${normal}"
+    printf "\n${red}Plugin snmpsniffer is not installed, there was probably an error\n${normal}. Close the window to continue."
     exit 1
 fi
 
@@ -50,7 +55,7 @@ if [ ! -d "$HOME/.snmpsniffer"  ]; then
 	if [ ! -d "$HOME/.snmpsniffer/license" ]; then mkdir "$HOME/.snmpsniffer/license"; fi
 fi
 
-printf '\nPlugin installation finished, you can close the window\n'
+printf '\nPlugin installation finished. Close the window to continue with the installation.\n'
 
 exit 0
 

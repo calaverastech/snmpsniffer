@@ -5,10 +5,22 @@ uninst="N"
 echo "Would you like to continue with the uninstallation? Y/N [N]"
 read uninst
 if [ $uninst != "Y" ] && [ $uninst != "y" ]; then exit 1; fi
-prefix=$(which node 2>/dev/null | sed "s|/bin/.*||")
-echo "Removing the application..."
-sudo rm -rf "$prefix/lib/node_modules/snmpsniffer"
-sudo rm "$prefix/bin/snmpsniffer"
+#prefix=$(which node 2>/dev/null | sed "s|/bin/.*||")
+prefix=$(which node 2>/dev/null | sed "s|/bin/.*|/bin|")
+if [ -f /etc/debian_version ] || [ -f /etc/fedora_release ]; then app_prefix="/usr/local"; else app_prefix="/usr"; fi
+echo "Removing the library..."
+if [ -w $prefix ];then
+	npm uninstall -g snmpsniffer
+        echo "Removing launcher..."
+	sudo rm $app_prefix/bin/snmpsniffer
+        rm $prefix/snmpsniffer
+else
+	sudo npm uninsall -g snmpsniffer
+        echo "Removing launcher..."
+        sudo rm $prefix/snmpsniffer
+fi
+#sudo rm -rf "$prefix/lib/node_modules/snmpsniffer"
+#sudo rm "$prefix/bin/snmpsniffer"
 echo "Removing shortcuts..."
 xdg-desktop-icon uninstall snmpsniffer.desktop
 xdg-desktop-menu uninstall snmpsniffer.desktop
@@ -23,8 +35,8 @@ xdg-icon-resource uninstall --size 64 snmpsniffer
 xdg-icon-resource uninstall --size 128 snmpsniffer
 xdg-icon-resource uninstall --size 256 snmpsniffer
 
-echo "Removing the launcher..."
-sudo rm "$prefix/share/applications/snmpsniffer.desktop"
+echo "Removing the application..."
+sudo rm "$app_prefix/share/applications/snmpsniffer.desktop"
 echo "The application is uninstalled"
 
 #removenode="N"

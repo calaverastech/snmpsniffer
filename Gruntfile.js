@@ -105,11 +105,6 @@ module.exports = function(grunt) {
 		        expand: true,
                 mode: true
         	},
-        	fileCopy: {
-        		expand: true,
-                mode: true,
-                flatten: true
-        	},
         	macResourcesCopy: {
         		files: [
         		        { expand: true, cwd: '<%= CWD %>', src: "LICENSE*.txt", dest: '<%= DEST %>/Resources/en.lproj', rename: function(dest, src) {
@@ -136,7 +131,7 @@ module.exports = function(grunt) {
         clean: {
             linuxPrepare: {
                 cwd: '<%= CWD %>/',
-                src: ["<%= CWD %>/packages/**/*.tar.gz"],
+                src: ["packages/linux/*"],
                 expand: true,
                 options: {
                     force: true
@@ -144,7 +139,7 @@ module.exports = function(grunt) {
             },
         	macPrepare: {
                 cwd: '<%= CWD %>/',
-        		src: ["app/*.app", "installers/mac/*.dmg","<%= CWD %>/installers/mac/*.mpkg", "<%= CWD %>/packages/**/*.tar.gz"],
+        		src: ["app/*.app", "installers/mac/*.dmg","installers/mac/*.pkg", "packages/mac/*"],
         		expand: true,
         		options: {
         			force: true
@@ -164,17 +159,6 @@ module.exports = function(grunt) {
                 expand:  true
             }
         },
-    	foldersCopy: {
-            config_folders: {
-    			scriptsFolder: "scripts",
-    			projectsFolder: "projects"
-    		},
-    		result_folders: {
-    			appFolder: "app",
-    			installersFolder: "installers",
-    			packagesFolder: "packages"
-    		}
-    	},
     	createPackagesMac: {
             libCopy: {
                 src: ["icons/**", "LICENSE/**", "public/css/**", "public/dist/**", "!public/dist/**/*.txt", "views/*", "LICENSE*.txt", "README*.txt", "package.json", "*.min.js"],
@@ -227,6 +211,11 @@ module.exports = function(grunt) {
                     return "cd " + cwd + " && npm pack " + dir + " && rm -rf " + dir;
                 }
             },
+            compressMac: {
+                cmd: function(cwd, pkgname) {
+                        return "tar --remove-files -pczf " + cwd + "/" + pkgname + ".tar.gz " + " -C "+ cwd + " " + pkgname;               
+                }
+            },
     		createMacApp: {
     			cmd: function(cwd, comm, app) {
     				return 'mkdir -p app && /usr/local/bin/platypus -A -y -o "Text Window" -i ' + cwd + '/icons/snmpsniffer.icns -V ' + version + ' -u "CalaverasTech.com" -I com.calaverastech.Snmpsniffer ' + comm + " " + app;
@@ -271,15 +260,16 @@ module.exports = function(grunt) {
     		},
     		createMacProduct: {
     			cmd: function(distr, respath, packages, pkgname) {
-                    var dest = grunt.config("DEST");
-                    var packagesStr = _.map(packages.split(","), function(p) {return " --package-path " + dest + "/" + p}).join(" ");
-                    return "productbuild --distribution " + dest + "/" + distr + " --resources " + dest + "/" + respath + " " + packagesStr + " " + dest + "/" + pkgname + ".pkg";
+                    var cwd = grunt.config("DEST");
+                    var dest = grunt.config("CWD") + "/installers/mac";
+                    return "productbuild --distribution " + cwd + "/" + distr + " --resources " + cwd + "/" + respath + " --package-path " + cwd + " " + dest + "/" + pkgname + ".pkg";
     			},
     			stdout: true
     		},
             createMacDmg: {
-                cmd: function(cwd, prodname, pkgname) {
-                    return "hdiutil create -volname " + prodname + " -srcfolder " + cwd + "/" + pkgname + ".pkg -ov -format UDZO " + cwd + "/" + pkgname + ".dmg";
+                cmd: function(prodname, pkgname) {
+                    var dest = grunt.config("CWD") + "/installers/mac";
+                    return "hdiutil create -volname " + prodname + " -srcfolder " + dest + "/" + pkgname + ".pkg -ov -format UDZO " + dest + "/" + pkgname + ".dmg";
                 },
                 stdout: true
             }
@@ -397,14 +387,13 @@ module.exports = function(grunt) {
         		}
         	}
         },
-        //commands: {
-        //	modify_server: {
-        //		cmd: ["mkdir tmp", "cd tmp", "./grunt-modify-server"]
-        //	},
-        //	copy_server: {
-        //		cmd: ["./grunt-copy-server", "rm -rf tmp"]
-        //	}
-        //},
+        gitfetch: {
+            origin_master: {
+              options: {
+                all: true
+              }
+            }
+        },
         watch: {
         	scripts: {
         	  files: ['**/*.js'],
@@ -494,29 +483,13 @@ module.exports = function(grunt) {
     
     grunt.registerTask("minify", "Minify javascript files", ["requirejs:compile", "uglifyServer", "copyMinServer"]);
     
-    grunt.registerMultiTask("foldersCopy", function() {
-    	var copyos = !!grunt.option("copyos") ? ("/" + grunt.option("copyos")):"";
-    	var srcdir = (!!grunt.option("relativesrc") ? (HOME + "/") : "") + grunt.option("srcdir");
-    	var destdir = (!!grunt.option("relativedest") ? (HOME + "/") : "") + grunt.option("destdir");
-    	grunt.config("copy.folderCopy.cwd", srcdir);
-    	grunt.config("copy.folderCopy.dest", destdir);
-    	var srcs = [];
-    	if(this.args.length > 0) {
-    		srcs.push(this.args[0] + ((this.args[0] == "app") ? "" : copyos) + "/**/*");
-    	} else {
-	    	for(var key in this.data) {
-	    		srcs.push(this.data[key] + ((this.data[key] == "app") ? "" : copyos) + "/**/*");
-	    	}
-    	}
-    	grunt.config("copy.folderCopy.src", srcs);
-    	if(!!grunt.option("clean")) {
-    		grunt.task.run("clean");
-    	}
-    	grunt.task.run("copy:folderCopy");
-    });
-    
     grunt.registerTask("gitProjects", "New build", ["gitadd", "gitcommit", "gitpush:origin_master"]);
     
+    //grunt.registerTask("gitMac", "New build Mac", function() {
+    //	grunt.config("gitadd.files.src", ["installers/mac/*.pkg", "installers/mac/*.dmg", "packages/mac/*"]);
+    //	grunt.task.run("gitProjects");
+    //});
+    	
     grunt.registerTask("archiveLinux", "Create application archive for Linux", function() {
     	var filename =  "snmpsniffer-linux-v"+version + grunt.config("compress.linux.options.ext");
     	var files = grunt.config.get("compress.linux.files");
@@ -540,9 +513,6 @@ module.exports = function(grunt) {
         if(this.target === "appCopy") {
             var app =cwd + "/app/" + appName;
             grunt.task.run("exec:createMacApp:"+cwd + ":" + comm + ":" + app);
-            //grunt.config("copy.fileCopy.src", cwd+"/bin/mac/*.sh");
-            //grunt.config("copy.fileCopy.dest", app + "/Contents/Resources/");
-            //grunt.task.run("copy:fileCopy");
             cwd = cwd + "/app";
     	} 
     	grunt.config("copy.folderCopy.cwd", cwd);
@@ -555,7 +525,6 @@ module.exports = function(grunt) {
             grunt.config("copy.folderCopy.flatten", false);
                             
     	}
-                            
         grunt.task.run("copy:folderCopy");
                             
         if(this.target === "preflightCopy" || this.target === "commandCopy" || this.target === "uninstallCopy" || this.target === "appCopy") {
@@ -619,15 +588,24 @@ module.exports = function(grunt) {
         var pkgname = "SNMPSniffer-v"+version;
         grunt.task.run("exec:createMacProduct:distribution.dist:Resources:" + packages + ":" + pkgname);
                        
-        grunt.task.run("exec:createMacDmg:" + dest + ":SNMPSniffer:"+pkgname);
+        grunt.task.run("exec:createMacDmg:SNMPSniffer:"+pkgname);
+                            
+        var name = "snmpsniffer-mac-v"+version;
+        var dir = cwd + "/packages/mac/" + name;
+        grunt.config("copy.folderCopy.cwd", cwd);
+        grunt.config("copy.folderCopy.src", ["installers/mac/*-uninstall", "installers/mac/*.pkg", "README.txt"]);
+        grunt.config("copy.folderCopy.dest", dir);
+        grunt.config("copy.folderCopy.flatten", true);
                        
-    	grunt.config("copy.folderCopy.cwd", dest);
-    	grunt.config("copy.folderCopy.src", [pkgname+".pkg", pkgname+".dmg"]);
-    	grunt.config("copy.folderCopy.dest", cwd + "/installers/mac");
-    	grunt.task.run("copy:folderCopy");
+        grunt.task.run("copy:folderCopy");
                        
-        grunt.config("compress.mac.options.archive", cwd + "/packages/mac/snmpsniffer-mac-v"+version+".tar.gz");
-        grunt.task.run("compress:mac");
+        grunt.config("chmod.src", dir + "/snmpsniffer-uninstall");
+        grunt.task.run("chmod");
+                       
+        grunt.task.run("exec:compressMac:"+ cwd + "/packages/mac:"+name);
+                       
+        //grunt.config("compress.mac.options.archive", cwd + "/packages/mac/snmpsniffer-mac-v"+version+".tar.gz");
+        //grunt.task.run("compress:mac");
     });
                                 
     //grunt.registerTask("packageLinux", "Create Linux installer archive", ["clean:linuxPrepare", "minify", "archiveLinux", "gitProjects"]);

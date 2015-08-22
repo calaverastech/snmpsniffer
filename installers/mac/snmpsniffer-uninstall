@@ -12,7 +12,6 @@ sudo npm uninstall -g snmpsniffer
 
 echo "Removing the launcher..."
 dir=$(dirname $(which snmpsniffer))
-sudo rm $dir/snmpsniffer-run.sh
 sudo rm $dir/snmpsniffer
 
 echo "Removing the bundle..."

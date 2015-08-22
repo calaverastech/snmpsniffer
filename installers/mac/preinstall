@@ -13,22 +13,27 @@ ERROR=$(osascript <<EOF
         activate
         set w to do script "sh $tempd/preinstall-script $tempd $arch"
         delay 1
-        try
-            repeat
-                delay 0.1
-                if busy of w then exit repeat
-            end repeat
-            repeat
-                delay 0.1
-                if not busy of w then exit repeat
-            end repeat
-        on error errorMsg number errorNumber
-            -- display dialog "Cannot install plugins, exiting"
-            return "Error"
-        end try
-        tell front window to set theText to contents of selected tab as text
+        set scriptRunning to true
+        repeat while w exists
+            delay 0.1
+            try
+                repeat
+                    delay 0.1
+                    if not busy of w then
+                        set scriptRunning to false
+                        tell front window to set theText to contents of selected tab as text
+                        exit repeat
+                    end if
+                end repeat
+            on error errorMsg number errorNumber
+                if scriptRunning then
+                    -- display dialog "Cannot install plugins, exiting"
+                    return "Error"
+                end if
+            end try
+        end repeat
+        -- tell front window to set theText to contents of selected tab as text
     end tell
-    -- display dialog theText
     -- tell application "Terminal" to close window 1
     set scriptError to ""
     try
@@ -36,17 +41,13 @@ ERROR=$(osascript <<EOF
     on error errorMsg number errorNumber
         -- ignore
     end try
-    -- display dialog scriptError
     return scriptError
 EOF)
 
-#while [ -e $tempd ];do
-#    sleep 1
-#done
 
 #error=$(npm list -g snmpsniffer 1>/dev/null)
 
-#echo "error $ERROR"
+rm -rf $tempd
 
 if [ -n "$ERROR" ];then 
     #echo "failure"

@@ -1,9 +1,13 @@
 #!/bin/sh
 
-prefix=$(which node | sed 's|/bin/.*||')
-if [ "x$prefix" = "x" ];then
+node=$(which node 2> /dev/null)
+if [ "x$node" = "x" ];then
 	echo "Nodejs is not installed"
 	exit 1
+fi
+npm=$(which npm 2> /dev/null)
+if [ "xnpm" = "x" ];then
+    echo "npm is not installed"
 fi
 running=$(ps aux | grep "node " | grep -v grep)
 ki="N"
@@ -13,35 +17,39 @@ if [ "x$running" != "x" ];then
     if [ $ki != "Y" ] && [ $ki != "y" ]; then exit 0; fi
     sudo pkill -f "node "
 fi
+
 i=0
 cur=""
 cd $(dirname $0)
-while [ "x$cur" = "x" ] && [ "$cur" != "/" ] && [ $i -lt 5 ] 
+while [ "x$cur" = "x" ] && [ "$cur" != "/" ] && [ $i -lt 5 ]
 do
-	cur=$(ls | grep 'server.*js')
-	if [ "x$cur" = "x" ];then 
-		cd ../
-	fi
-	i=$((i+1))
+    cur=$(ls | grep 'server.*js')
+    if [ "x$cur" = "x" ];then
+        cd ../
+    fi
+    i=$((i+1))
 done
+
 if [ "x$cur" = "x" ];then
-	if [ -z $SNMPSNIFFER_HOME ];then
-		sniff=$(ls "$prefix/lib/node_modules" | grep "snmpsniffer")
-		if [ "x$sniff" = "x" ];then
-			echo "The library is not installed"
-			exit 1
-		fi
-		export SNMPSNIFFER_HOME="$prefix/lib/node_modules/snmpsniffer"
-	fi
-	cd $SNMPSNIFFER_HOME
+    err=$(npm list -g snmpsniffer 1> /dev/null)
+    if [ -n "$err" ];then
+        echo "The library is not installed"
+        exit 1
+    fi
+    lib=$(npm list -g snmpsniffer | head -n1)
+    export SNMPSNIFFER_HOME="$lib/node_modules/snmpsniffer"
+    cd $SNMPSNIFFER_HOME
 fi
+
+echo "Wait, the application is starting..."
+
 help=$(echo $* | grep "\-\-help")
 serv=$(ls | grep 'server.min.js')
 if [ "x$serv" = "x" ];then
 	serv=$(ls | grep 'server.js')
 fi
 if [ "x$help" = "x" ];then
-	gksudo "node $serv $*" -k
+	gksudo "env 'PATH=$PATH' node $serv $*"
 else
 	node $serv $*
 fi

@@ -1,40 +1,8 @@
 #!/bin/sh
 
-install_prefix="$1"
 curr=$(pwd | grep '/installers/linux$')
 if [ "x$curr" != "x" ]; then  cd ../../;fi
-node=$(ls | grep "^node$\|^node-..*")
-if [ ! -z $node ] && [ -d $node ]; then
-	reinstall="Y"
-	nodeinstalled=$(command -v node)
-	if [ ! -z $nodeinstalled ]; then
-	        reinstall="N"
-		version=$(node --version)
-		echo "Nodejs, version $version, is already installed. Would you like to reinstall Nodejs Y/N [N]?"
-		read reinstall
-	fi
-	if [ $reinstall = "Y" ] || [ $reinstall = 'y' ]; then
-		if [ "x$install_prefix" = "x" ]; then 
-			if [ -f /etc/debian_version ] || [ -f /etc/fedora_release ]; then install_prefix="/usr/local"; else install_prefix="/usr"; fi
-		elif [ -f /etc/debian_version ] && [ $install_prefix!="/usr/local" ] && [ $install_prefix!="/usr" ]; then 
-			echo "Bad installation directory, only /usr and /usr/local are allowed"
-			exit 1
-		elif [ $install_prefix!="/usr" ]; then 
-			echo "Bad installation directory. The installation directory will be set to /usr"
-			install_prefix="/usr"
-		fi		
-		cd $node
-		sudo cp -fr bin/* "$install_prefix/bin"
-		sudo cp -fr lib/* "$install_prefix/lib"
-		mandir="$install_prefix/share/man/man1"
-		if [ ! -d $mandir ]; then sudo mkdir -p "$mandir"; fi
-		sudo cp -fr share/man/man1/* "$mandir"
-		cd "../" 
-		echo "Nodejs installed"
-	fi
-fi
-prefix=$(which node 2>/dev/null | sed "s|/bin/.*||")
-dir="$prefix/lib/node_modules/snmpsniffer"
+prefix=$(which node 2>/dev/null | sed "s|/bin/.*|/bin|")
 if [ "x$prefix" = "x" ]; then
 	echo "Nodejs is not installed"
 	exit 1
@@ -45,20 +13,39 @@ else
 		exit 1
 	fi
 fi
+
+if [ -f /etc/debian_version ] || [ -f /etc/fedora_release ]; then app_prefix="/usr/local"; else app_prefix="/usr"; fi
+
+
 echo "Installing packages..."
-sudo NODE_ENV=production "$prefix/bin/npm" install -g
+if [ -w $prefix ];then
+	NODE_ENV=production "$prefix/npm" install -g
+	echo "Create node global symlink..."
+        sudo ln -s -f "$prefix/node" $app_prefix/bin/node
+        echo "Create npm global symlink..."
+        sudo ln -s -f "$prefix/npm" $app_prefix/bin/npm 
+else
+	sudo NODE_ENV=production "$prefix/npm" install -g
+fi
 
 echo "Checking the application data directory..."
 if [ ! -d "$HOME/.snmpsniffer/config"  ]; then
 	mkdir -p "$HOME/.snmpsniffer/config"
-	cp -R $dir/files/config/config.txt "$HOME/.snmpsniffer/config"
+	cp -R files/config/config.txt "$HOME/.snmpsniffer/config"
 	if [ ! -d "$HOME/.snmpsniffer/license" ]; then mkdir "$HOME/.snmpsniffer/license"; fi
 	mkdir -p "$HOME/.snmpsniffer/log"
 fi
 
 echo "Creating a launcher..."
-sudo mv -f "$dir/snmpsniffer" "$prefix/bin/snmpsniffer"
-sudo chmod 755 "$prefix/bin/snmpsniffer"
+if [ -w $prefix ];then
+	cp -f "bin/linux/snmpsniffer" "$prefix/snmpsniffer"
+        echo "Create snmpsniffer global symlink..."
+        sudo ln -s -f "$prefix/snmpsniffer" $app_prefix/bin/snmpsniffer
+else
+	sudo cp -f "bin/linux/snmpsniffer" "$prefix/snmpsniffer"
+fi
+
+sudo chmod 755 "$prefix/snmpsniffer"
 
 echo "Copying icons..."
 
@@ -72,9 +59,11 @@ xdg-icon-resource install --novendor --size 128 icons/snmp_sniffer128x128.png sn
 xdg-icon-resource install --novendor --size 256 icons/snmp_sniffer256x256.png snmpsniffer
 
 echo "Creating an application menu item..."
-if [ ! -d "$prefix/share/applications" ]; then sudo mkdir "$prefix/share/applications"; fi
-sudo mv -f "$dir/snmpsniffer.desktop" "$prefix/share/applications"
-xdg-desktop-menu install --novendor "$prefix/share/applications/snmpsniffer.desktop"
+if [ ! -d "$app_prefix/share/applications" ]; then sudo mkdir -p "$app_prefix/share/applications"; fi
+sudo cp -f "bin/linux/snmpsniffer.desktop" "$app_prefix/share/applications"
+xdg-desktop-menu install --novendor "$app_prefix/share/applications/snmpsniffer.desktop"
+
+
 echo "Installation finished"
 
 
