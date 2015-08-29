@@ -393,8 +393,7 @@ module.exports = function(grunt) {
         gitfetch: {
             origin_master: {
               options: {
-            	cwd: "<%= CWD %>",
-            	remote: 'origin'
+            	cwd: "<%= CWD %>"
               }
             }
         },
@@ -482,7 +481,7 @@ module.exports = function(grunt) {
     	if(!!grunt.option("msg")) {
     		grunt.config("gitcommit.task.options.message", grunt.option("msg"));
     	}	
-    	grunt.task.run(["gitfetch", "gitadd", "gitcommit"]);
+    	grunt.task.run(["gitadd", "gitcommit"]);
      });
     
      //Grunt local machine
