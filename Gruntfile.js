@@ -491,7 +491,7 @@ module.exports = function(grunt) {
     	if(!!commitmsg) {
     		grunt.option("msg", commitmsg);
     	}	
-    	grunt.task.run(["gitProjects", "gitpush"]);
+    	grunt.task.run(["gitpull", "gitProjects", "gitpush"]);
     });
 
     grunt.registerTask("uglifyServer", "Uglify server files", function() {
