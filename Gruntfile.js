@@ -491,13 +491,11 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask("uglifyServer", "Uglify server files", function() {
-    	//grunt.task.run("commands:mkdir_tmp");
-        grunt.task.run(["exec:mkdir:"+grunt.config("CWD"), "copy:serverCopy", "uglify"]);
+        grunt.task.run(["commands:mkdir_tmp", "copy:serverCopy", "uglify"]);
     });
     
     grunt.registerTask("copyMinServer", "Copy uglified server files", function() {
-		grunt.task.run(['copy:serverCopyBack', "exec:rmdir:"+grunt.config("CWD")]);
-		//grunt.task.run('commands:rm_tmp');
+		grunt.task.run(['copy:serverCopyBack', "commands:rm_tmp"]);
     });
     
     grunt.registerTask("minify", "Minify javascript files", ["requirejs:compile", "uglifyServer", "copyMinServer"]);
