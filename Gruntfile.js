@@ -509,11 +509,11 @@ module.exports = function(grunt) {
     	
     grunt.registerTask("archiveLinux", "Create application archive for Linux", function() {
     	var filename =  "snmpsniffer-linux-v"+version + grunt.config("compress.linux.options.ext");
-    	var files = grunt.config.get("compress.linux.files");
+    	//var files = grunt.config.get("compress.linux.files");
     	//files.forEach(function(f) {
     	//	f.dest = grunt.option("archive");
     	//});
-    	grunt.config("compress.linux.files", files);
+    	//grunt.config("compress.linux.files", files);
     	grunt.config("compress.linux.options.archive", grunt.config("compress.linux.options.dest") + filename);
     	grunt.task.run("compress:linux");
     });  
