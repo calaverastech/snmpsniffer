@@ -486,10 +486,8 @@ module.exports = function(grunt) {
     //grunt.registerTask('local', ["jshintLocal", "minify", "mochaLocal", "karma:unit"]);
     grunt.registerTask('local', "Local tests", function(passw, commitmsg) {
     	grunt.task.run(["backup", "jshintLocal", "exec:runassudo:mochaLocal:"+passw, "karma:unit"]);
-    	if(!!commitmsg) {
-    		grunt.task.run(["gitProjects:"+commitmsg, "gitpush"]);
-    		//grunt.task.run(["gitProjects:"+commitmsg]);
-    	}
+    	var msg = (!commitmsg)? ("New build " + grunt.template.today('mmmm dd h:MM TT, yyyy')):commitmsg;
+    	grunt.task.run(["gitProjects:"+msg, "gitpush"]);
     });
 
     grunt.registerTask("uglifyServer", "Uglify server files", function() {
