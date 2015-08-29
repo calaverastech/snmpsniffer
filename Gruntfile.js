@@ -367,6 +367,7 @@ module.exports = function(grunt) {
         gitadd: {
         	task: {
         		options: {
+            		cwd: "<%= CWD %>",
         			all: true
         		}
         	}
@@ -374,6 +375,7 @@ module.exports = function(grunt) {
         gitcommit: {
         	task: {
         		options: {
+            		cwd: "<%= CWD %>",
         			message: "New Build "+ grunt.template.today('mmmm dd h:MM TT, yyyy'),
         			allowEmpty: true
         		}
@@ -382,6 +384,7 @@ module.exports = function(grunt) {
         gitpush: {
         	origin_master: {
         		options: {
+            		cwd: "<%= CWD %>",
         			remote: 'origin',
         			branch: 'master'
         		}
@@ -390,6 +393,7 @@ module.exports = function(grunt) {
         gitfetch: {
             origin_master: {
               options: {
+            	cwd: "<%= CWD %>",
                 all: true
               }
             }
@@ -483,7 +487,7 @@ module.exports = function(grunt) {
     
     grunt.registerTask("minify", "Minify javascript files", ["requirejs:compile", "uglifyServer", "copyMinServer"]);
     
-    grunt.registerTask("gitProjects", "New build", ["gitadd", "gitcommit", "gitpush:origin_master"]);
+    grunt.registerTask("gitProjects", "New build", ["gitadd", "gitcommit"]);
     
     //grunt.registerTask("gitMac", "New build Mac", function() {
     //	grunt.config("gitadd.files.src", ["installers/mac/*.pkg", "installers/mac/*.dmg", "packages/mac/*"]);
@@ -608,12 +612,12 @@ module.exports = function(grunt) {
         //grunt.task.run("compress:mac");
     });
                                 
-    //grunt.registerTask("packageLinux", "Create Linux installer archive", ["clean:linuxPrepare", "minify", "archiveLinux", "gitProjects"]);
-    grunt.registerTask("packageLinux", "Create Linux installer archive", ["clean:linuxPrepare", "minify", "archiveLinux"]);
+    grunt.registerTask("packageLinux", "Create Linux installer archive", ["clean:linuxPrepare", "minify", "archiveLinux", "gitProjects"]);
+    //grunt.registerTask("packageLinux", "Create Linux installer archive", ["clean:linuxPrepare", "minify", "archiveLinux"]);
                      
                      
-    //grunt.registerTask("packageMac", "Create packages and archive for Mac", ["clean:macPrepare", "clean:macBuild", "minify", "createPackagesMac", "productMac", "clean:macGarbage", "gitProjects"]);
-    grunt.registerTask("packageMac", "Create packages and archive for Mac", ["clean:macPrepare", "clean:macBuild", "minify", "createPackagesMac", "productMac", "clean:macGarbage"]);
+    grunt.registerTask("packageMac", "Create packages and archive for Mac", ["clean:macPrepare", "clean:macBuild", "minify", "createPackagesMac", "productMac", "clean:macGarbage", "gitProjects"]);
+    //grunt.registerTask("packageMac", "Create packages and archive for Mac", ["clean:macPrepare", "clean:macBuild", "minify", "createPackagesMac", "productMac", "clean:macGarbage"]);
     
 //    grunt.registerTask('karmaDist', 'Karma tests for minified frontend', function() {
 //    	grunt.config('karma.unit.options.basePath', 'public/dist');
