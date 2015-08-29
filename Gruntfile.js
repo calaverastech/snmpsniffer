@@ -393,7 +393,8 @@ module.exports = function(grunt) {
         gitfetch: {
             origin_master: {
               options: {
-            	cwd: "<%= CWD %>"
+            	cwd: "<%= CWD %>",
+            	repository: 'origin'
               }
             }
         },
