@@ -376,7 +376,6 @@ module.exports = function(grunt) {
         	task: {
         		options: {
             		cwd: "<%= CWD %>",
-        			message: "New Build "+ grunt.template.today('mmmm dd h:MM TT, yyyy'),
         			allowEmpty: true
         		}
         	}
