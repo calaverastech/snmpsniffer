@@ -487,8 +487,8 @@ module.exports = function(grunt) {
     grunt.registerTask('local', "Local tests", function(passw, commitmsg) {
     	grunt.task.run(["backup", "jshintLocal", "exec:runassudo:mochaLocal:"+passw, "karma:unit"]);
     	if(!!commitmsg) {
-    		//grunt.task.run(["gitProjects:"+commitmsg, "gitpush"]);
-    		grunt.task.run(["gitProjects:"+commitmsg]);
+    		grunt.task.run(["gitProjects:"+commitmsg, "gitpush"]);
+    		//grunt.task.run(["gitProjects:"+commitmsg]);
     	}
     });
 
