@@ -622,11 +622,11 @@ module.exports = function(grunt) {
         //grunt.task.run("compress:mac");
     });
                                 
-    grunt.registerTask("packageLinux", "Create Linux installer archive", ["clean:linuxPrepare", "minify", "archiveLinux", "gitProjects:"+"Linux new Build "+ grunt.template.today('mmmm dd h:MM TT, yyyy')]);
+    grunt.registerTask("packageLinux", "Create Linux installer archive", ["clean:linuxPrepare", "minify", "archiveLinux", "gitProjects:"+"New Build "+ grunt.template.today('mmmm dd h:MM TT, yyyy')]);
     //grunt.registerTask("packageLinux", "Create Linux installer archive", ["clean:linuxPrepare", "minify", "archiveLinux"]);
                      
                      
-    grunt.registerTask("packageMac", "Create packages and archive for Mac", ["clean:macPrepare", "clean:macBuild", "minify", "createPackagesMac", "productMac", "clean:macGarbage", "gitProjects:" + "Mac new Build "+ grunt.template.today('mmmm dd h:MM TT, yyyy')]);
+    grunt.registerTask("packageMac", "Create packages and archive for Mac", ["clean:macPrepare", "clean:macBuild", "minify", "createPackagesMac", "productMac", "clean:macGarbage", "gitProjects:" + "New Build "+ grunt.template.today('mmmm dd h:MM TT, yyyy')]);
     //grunt.registerTask("packageMac", "Create packages and archive for Mac", ["clean:macPrepare", "clean:macBuild", "minify", "createPackagesMac", "productMac", "clean:macGarbage"]);
     
 //    grunt.registerTask('karmaDist', 'Karma tests for minified frontend', function() {
