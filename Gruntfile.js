@@ -478,7 +478,7 @@ module.exports = function(grunt) {
     });
     
     grunt.registerTask("gitProjects", "New build", function(msg) {
-    	grunt.config("gitcommit.task.message", msg);
+    	grunt.config("gitcommit.task.options.message", msg);
     	grunt.task.run(["gitadd", "gitcommit"]);
      });
     
