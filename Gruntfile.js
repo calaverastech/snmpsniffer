@@ -20,7 +20,7 @@ module.exports = function(grunt) {
     rjs_build.baseUrl = "public/js";
     rjs_build.dir = "public/dist";
 
-    
+    var path = require("path");
     var _ = require('lodash');
     
     var ver = grunt.file.readJSON("package.json").version,
@@ -398,6 +398,15 @@ module.exports = function(grunt) {
               }
             }
         },
+        gitpull: {
+            origin_master: {
+            options: {
+	          	cwd: "<%= CWD %>",
+	            remote: 'origin',
+	            branch: 'master'
+	        }
+          }
+        },
         watch: {
         	scripts: {
         	  files: ['**/*.js'],
@@ -458,36 +467,43 @@ module.exports = function(grunt) {
     grunt.registerTask('mochaLocal', 'Local mocha tests', function() {
         grunt.config('mochaTest.test.src', tests_local_backend);
     	//grunt.config('mochaTest.test.src', allJs_local);
-        grunt.task.run("run:server");
-        grunt.task.run('mochaTest:test');
-        grunt.task.run("stop:server");
+        grunt.task.run(["run:server", "mochaTest:test", "stop:server"]);
     });
+    
+    grunt.registerTask("backup", "Backup the project", function() {
+    	var destfile = path.dirname(grunt.config("CWD")) + "/" + path.basename(grunt.config("CWD")) + "-" + grunt.template.today('yyyy-mmmm-dd-h:MM:TT');
+    	grunt.config("copy.folderCopy.cwd", grunt.config("CWD"));
+    	grunt.config("copy.folderCopy.src", "**/*");
+    	grunt.config("copy.folderCopy.dest", destfile);
+    	grunt.task.run("copy:folderCopy");
+    });
+    
+    grunt.registerTask("gitProjects", "New build", function(msg) {
+    	grunt.config("gitcommit.task.message", msg);
+    	grunt.task.run(["gitadd", "gitcommit"]);
+     });
     
      //Grunt local machine
     //grunt.registerTask('local', ["jshintLocal", "minify", "mochaLocal", "karma:unit"]);
-    grunt.registerTask('local', "Local tests", function(passw) {
-    	grunt.task.run("jshintLocal");
-    	grunt.task.run("exec:runassudo:mochaLocal:"+passw);
-    	grunt.task.run("karma:unit");
+    grunt.registerTask('local', "Local tests", function(passw, commitmsg) {
+    	grunt.task.run(["backup", "jshintLocal", "exec:runassudo:mochaLocal:"+passw, "karma:unit"]);
+    	if(!!commitmsg) {
+    		//grunt.task.run(["gitProjects:"+commitmsg, "gitpush"]);
+    		grunt.task.run(["gitProjects:"+commitmsg]);
+    	}
     });
-
 
     grunt.registerTask("uglifyServer", "Uglify server files", function() {
     	//grunt.task.run("commands:mkdir_tmp");
-        grunt.task.run("exec:mkdir:"+grunt.option("cwd"));
-    	grunt.task.run('copy:serverCopy');
-    	grunt.task.run("uglify");
+        grunt.task.run(["exec:mkdir:"+grunt.config("CWD"), "copy:serverCopy", "uglify"]);
     });
     
     grunt.registerTask("copyMinServer", "Copy uglified server files", function() {
-		grunt.task.run('copy:serverCopyBack');
+		grunt.task.run(['copy:serverCopyBack', "exec:rmdir:"+grunt.config("CWD")]);
 		//grunt.task.run('commands:rm_tmp');
-        grunt.task.run("exec:rmdir:"+grunt.option("cwd"));
     });
     
     grunt.registerTask("minify", "Minify javascript files", ["requirejs:compile", "uglifyServer", "copyMinServer"]);
-    
-    grunt.registerTask("gitProjects", "New build", ["gitadd", "gitcommit"]);
     
     //grunt.registerTask("gitMac", "New build Mac", function() {
     //	grunt.config("gitadd.files.src", ["installers/mac/*.pkg", "installers/mac/*.dmg", "packages/mac/*"]);
@@ -497,9 +513,9 @@ module.exports = function(grunt) {
     grunt.registerTask("archiveLinux", "Create application archive for Linux", function() {
     	var filename =  "snmpsniffer-linux-v"+version + grunt.config("compress.linux.options.ext");
     	var files = grunt.config.get("compress.linux.files");
-    	files.forEach(function(f) {
-    		f.dest = grunt.option("archive");
-    	});
+    	//files.forEach(function(f) {
+    	//	f.dest = grunt.option("archive");
+    	//});
     	grunt.config("compress.linux.files", files);
     	grunt.config("compress.linux.options.archive", grunt.config("compress.linux.options.dest") + filename);
     	grunt.task.run("compress:linux");
@@ -579,8 +595,7 @@ module.exports = function(grunt) {
             return r.xpath === "//script";
         });
 
-        grunt.config("xmlpoke.updateDistribution.options.replacements."+scriptIndex+".value", checkscript);
-                     
+        grunt.config("xmlpoke.updateDistribution.options.replacements."+scriptIndex+".value", checkscript);             
                        
         grunt.task.run("xmlpoke");
                        
@@ -612,11 +627,11 @@ module.exports = function(grunt) {
         //grunt.task.run("compress:mac");
     });
                                 
-    grunt.registerTask("packageLinux", "Create Linux installer archive", ["clean:linuxPrepare", "minify", "archiveLinux", "gitProjects"]);
+    grunt.registerTask("packageLinux", "Create Linux installer archive", ["clean:linuxPrepare", "minify", "archiveLinux", "gitProjects:"+"Linux new Build "+ grunt.template.today('mmmm dd h:MM TT, yyyy')]);
     //grunt.registerTask("packageLinux", "Create Linux installer archive", ["clean:linuxPrepare", "minify", "archiveLinux"]);
                      
                      
-    grunt.registerTask("packageMac", "Create packages and archive for Mac", ["clean:macPrepare", "clean:macBuild", "minify", "createPackagesMac", "productMac", "clean:macGarbage", "gitProjects"]);
+    grunt.registerTask("packageMac", "Create packages and archive for Mac", ["clean:macPrepare", "clean:macBuild", "minify", "createPackagesMac", "productMac", "clean:macGarbage", "gitProjects:" + "Mac new Build "+ grunt.template.today('mmmm dd h:MM TT, yyyy')]);
     //grunt.registerTask("packageMac", "Create packages and archive for Mac", ["clean:macPrepare", "clean:macBuild", "minify", "createPackagesMac", "productMac", "clean:macGarbage"]);
     
 //    grunt.registerTask('karmaDist', 'Karma tests for minified frontend', function() {
