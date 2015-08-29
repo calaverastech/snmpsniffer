@@ -376,6 +376,7 @@ module.exports = function(grunt) {
         	task: {
         		options: {
             		cwd: "<%= CWD %>",
+            		message: "New Build "+ grunt.template.today('mmmm dd h:MM TT, yyyy'),
         			allowEmpty: true
         		}
         	}
@@ -392,8 +393,7 @@ module.exports = function(grunt) {
         gitfetch: {
             origin_master: {
               options: {
-            	cwd: "<%= CWD %>",
-                all: true
+            	cwd: "<%= CWD %>"
               }
             }
         },
@@ -477,17 +477,21 @@ module.exports = function(grunt) {
     	grunt.task.run("copy:folderCopy");
     });
     
-    grunt.registerTask("gitProjects", "New build", function(msg) {
-    	grunt.config("gitcommit.task.options.message", msg);
-    	grunt.task.run(["gitadd", "gitcommit"]);
+    grunt.registerTask("gitProjects", "New build", function() {
+    	if(!!grunt.option("msg")) {
+    		grunt.config("gitcommit.task.options.message", grunt.option("msg"));
+    	}	
+    	grunt.task.run(["gitfetch", "gitadd", "gitcommit"]);
      });
     
      //Grunt local machine
     //grunt.registerTask('local', ["jshintLocal", "minify", "mochaLocal", "karma:unit"]);
     grunt.registerTask('local', "Local tests", function(passw, commitmsg) {
     	grunt.task.run(["backup", "jshintLocal", "exec:runassudo:mochaLocal:"+passw, "karma:unit"]);
-    	var msg = (!commitmsg)? ("New build " + grunt.template.today('mmmm dd h:MM TT, yyyy')):commitmsg;
-    	grunt.task.run(["gitProjects:"+msg, "gitpush"]);
+    	if(!!commitmsg) {
+    		grunt.option("msg", commitmsg);
+    	}	
+    	grunt.task.run(["gitProjects", "gitpush"]);
     });
 
     grunt.registerTask("uglifyServer", "Uglify server files", function() {
@@ -622,11 +626,11 @@ module.exports = function(grunt) {
         //grunt.task.run("compress:mac");
     });
                                 
-    grunt.registerTask("packageLinux", "Create Linux installer archive", ["clean:linuxPrepare", "minify", "archiveLinux", "gitProjects:"+"New Build "+ grunt.template.today('mmmm dd h:MM TT, yyyy')]);
+    grunt.registerTask("packageLinux", "Create Linux installer archive", ["clean:linuxPrepare", "minify", "archiveLinux", "gitProjects"]);
     //grunt.registerTask("packageLinux", "Create Linux installer archive", ["clean:linuxPrepare", "minify", "archiveLinux"]);
                      
                      
-    grunt.registerTask("packageMac", "Create packages and archive for Mac", ["clean:macPrepare", "clean:macBuild", "minify", "createPackagesMac", "productMac", "clean:macGarbage", "gitProjects:" + "New Build "+ grunt.template.today('mmmm dd h:MM TT, yyyy')]);
+    grunt.registerTask("packageMac", "Create packages and archive for Mac", ["clean:macPrepare", "clean:macBuild", "minify", "createPackagesMac", "productMac", "clean:macGarbage", "gitProjects"]);
     //grunt.registerTask("packageMac", "Create packages and archive for Mac", ["clean:macPrepare", "clean:macBuild", "minify", "createPackagesMac", "productMac", "clean:macGarbage"]);
     
 //    grunt.registerTask('karmaDist', 'Karma tests for minified frontend', function() {
