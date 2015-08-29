@@ -394,7 +394,7 @@ module.exports = function(grunt) {
             origin_master: {
               options: {
             	cwd: "<%= CWD %>",
-            	repository: 'origin'
+            	remote: 'origin'
               }
             }
         },
