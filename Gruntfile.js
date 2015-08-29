@@ -481,7 +481,7 @@ module.exports = function(grunt) {
     	if(!!grunt.option("msg")) {
     		grunt.config("gitcommit.task.options.message", grunt.option("msg"));
     	}	
-    	grunt.task.run(["gitpull", "gitadd", "gitcommit"]);
+    	grunt.task.run(["gitadd", "gitcommit"]);
      });
     
      //Grunt local machine
