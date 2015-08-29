@@ -481,7 +481,7 @@ module.exports = function(grunt) {
     	if(!!grunt.option("msg")) {
     		grunt.config("gitcommit.task.options.message", grunt.option("msg"));
     	}	
-    	grunt.task.run(["gitadd", "gitcommit"]);
+    	grunt.task.run(["gitpull", "gitadd", "gitcommit"]);
      });
     
      //Grunt local machine
@@ -491,7 +491,7 @@ module.exports = function(grunt) {
     	if(!!commitmsg) {
     		grunt.option("msg", commitmsg);
     	}	
-    	grunt.task.run(["gitpull", "gitProjects", "gitpush"]);
+    	grunt.task.run(["gitProjects", "gitpush"]);
     });
 
     grunt.registerTask("uglifyServer", "Uglify server files", function() {
