@@ -2,7 +2,7 @@
   "author": "admin@calaverastech.com",
   "name": "snmpsniffer",
   "description": "sniff and record snmp from network",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "engines": {
     "node": "0.10.x",
@@ -23,7 +23,7 @@
     "ps-tree": "0.0.3"
   },
   "devDependencies": {
-  	"lodash": "^3.10.x",
+    "lodash": "^3.10.x",
     "expect.js": "^0.3.1",
     "should": "^5.0.0",
     "sinon": "^1.14.1",
