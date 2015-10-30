@@ -49,15 +49,14 @@
     "grunt-mocha-test": "^0.12.7",
     "grunt-contrib-requirejs": "^0.4.4",
     "grunt-contrib-uglify": "^0.9.x",
+    "grunt-productbuild": "^0.2.x",
     "grunt-contrib-copy": "^0.8.x",
     "grunt-contrib-compress": "^0.13.x",
     "grunt-contrib-clean": "^0.6.x",
     "grunt-commands": "^0.1.x",
     "grunt-exec": "^0.4.6",
     "grunt-run": "^0.2.x",
-    "grunt-plistbuddy": "^0.1.x",
     "grunt-chmod": "^1.x",
-    "grunt-xmlpoke": "^0.8.x",
     "grunt-git": "^0.3.x"
   },
   "scripts": {

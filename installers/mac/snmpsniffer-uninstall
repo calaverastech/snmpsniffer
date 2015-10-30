@@ -10,6 +10,11 @@ if [ $uninst != "Y" ] && [ $uninst != "y" ]; then exit 1; fi
 echo "Removing the library..."
 sudo npm uninstall -g snmpsniffer
 
+echo "Removing receipts..."
+sudo pkgutil --forget com.calaverastech.snmpsniffercommand.pkg
+sudo pkgutil --forget com.calaverastech.snmpsnifferapp.pkg
+sudo pkgutil --forget com.calaverastech.snmpsnifferuninstall.pkg
+
 echo "Removing the launcher..."
 dir=$(dirname $(which snmpsniffer))
 sudo rm $dir/snmpsniffer
