@@ -470,7 +470,7 @@ module.exports = function(grunt) {
         grunt.task.run("prepareMacProduct");
 
     	//callback to copy and compress the package
-    	grunt.config("productbuild.callback", function() {
+    	grunt.config("productbuild.snmpsniffer.callback", function() {
             var cwd = grunt.config("CWD");
            
             var name = "snmpsniffer-mac-v"+version;
