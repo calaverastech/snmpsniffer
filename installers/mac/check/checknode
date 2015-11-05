@@ -4,7 +4,7 @@
 NODEVERSION=$(osascript <<EOF
     tell application "Terminal"
         activate
-        set w to do script "printf 'nodejs version: ' | tr [:lower:] [:upper:];node -v 2> /dev/null | sed 's/^v//' | sed 's/[[:punct:]][[:digit:]]*$//'; printf '\nNodejs version determined. Close this window to continue with the installation.\n\n'"
+        set w to do script "printf 'nodejs version: ' | tr [:lower:] [:upper:];node -v 2> /dev/null | sed 's/^v//' | sed 's/[[:punct:]][[:digit:]]*$//'; printf '\nClose this window to continue with the installation.\n\n'"
         delay 1
         set scriptRunning to true
         repeat while w exists
