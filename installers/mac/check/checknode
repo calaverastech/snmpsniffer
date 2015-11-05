@@ -1,0 +1,54 @@
+#!/bin/bash
+
+
+NODEVERSION=$(osascript <<EOF
+    tell application "Terminal"
+        activate
+        set w to do script "printf 'nodejs version: ' | tr [:lower:] [:upper:];node -v 2> /dev/null | sed 's/^v//' | sed 's/[[:punct:]][[:digit:]]*$//'; printf '\nNodejs version determined. Close this window to continue with the installation.\n\n'"
+        delay 1
+        set scriptRunning to true
+        repeat while w exists
+           delay 0.1
+           try
+               repeat
+                  delay 0.1
+                  if not busy of w then
+                     set scriptRunning to false
+                     tell front window to set theText to contents of selected tab as text
+                     exit repeat
+                  end if
+               end repeat
+               on error errorMsg number errorNumber
+               if scriptRunning then
+                    return "Error"
+               end if
+            end try
+        end repeat
+    end tell
+    set nodeVersion to ""
+    try
+       set nodeVersion to do shell script "echo " & quoted form of theText & " | egrep -o '^NODEJS[[:space:]]+VERSION:[[:space:]]*[[:digit:]]+[[:punct:]][[:digit:]]+$' | sed 's/^NODEJS[[:space:]][[:space:]]*VERSION:[[:space:]]*//'"
+    on error errorMsg number errorNumber
+       -- ignore
+    end try
+    return nodeVersion
+EOF)
+
+if [ -n "$NODEVERSION" ];then
+    if (( $(bc <<< "$NODEVERSION < 0.1") || $(bc <<< "$NODEVERSION >= 1") ));then
+        echo "nodejs version 0.10 or above is not installed"
+        exit 1
+    else
+        exit 0
+    fi
+else
+    echo "nodejs is not installed"
+    exit 1
+fi
+#version=$(node -v 2> /dev/null | sed "s/^v//" | sed "s/[[:punct:]][[:digit:]]*$//" | bc)
+
+#if (( $(bc <<< "$version < 0.15") || $(bc <<< "$version >= 1") ));then
+#    exit 1
+#else
+#    exit 0
+#fi
