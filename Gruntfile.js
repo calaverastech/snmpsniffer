@@ -234,7 +234,6 @@ module.exports = function(grunt) {
         			title: "SNMPSniffer",
         			resources: "<%= DEST %>/Resources",
         			license: "LICENSE.txt",
-        			//script: "<%= CWD %>/installers/mac/checknode.js"
                     script:{src: "<%= CWD %>/installers/mac/check", title: 'Node 10 is not installed', message: 'The application requires Node.js 0.10 or above for the version 0.x. Node.js v4 and above haven\'t been tested yet.'}
                 },
         		packages: {
