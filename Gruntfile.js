@@ -494,14 +494,14 @@ module.exports = function(grunt) {
         grunt.task.run("productbuild:snmpsniffer");
     });
                                 
-    grunt.registerTask("packageLinux", "Create Linux installer archive", ["clean:linuxPrepare", "minify", "archiveLinux", "gitProjects"]);
+    grunt.registerTask("packageLinux", "Create Linux installer archive", ["clean:linuxPrepare", "minify", "archiveLinux", "gitProjects", "gitpull", "gitpush"]);
     //grunt.registerTask("packageLinux", "Create Linux installer archive", ["clean:linuxPrepare", "minify", "archiveLinux"]);
                      
                      
-    //grunt.registerTask("packageMac", "Create packages and archive for Mac", ["clean:macPrepare", "clean:macBuild", "minify", "createMacProduct", "clean:macGarbage", "gitProjects"]);
+    grunt.registerTask("packageMac", "Create packages and archive for Mac", ["clean:macPrepare", "clean:macBuild", "minify", "createMacProduct", "clean:macGarbage", "gitProjects", "gitpull", "gitpush"]);
                      
                      
-    grunt.registerTask("packageMac", "Create packages and archive for Mac", ["clean:macPrepare", "clean:macBuild", "minify", "createMacProduct", "clean:macGarbage"]);
+    //grunt.registerTask("packageMac", "Create packages and archive for Mac", ["clean:macPrepare", "clean:macBuild", "minify", "createMacProduct", "clean:macGarbage"]);
                      
                      
 //    grunt.registerTask('karmaDist', 'Karma tests for minified frontend', function() {
