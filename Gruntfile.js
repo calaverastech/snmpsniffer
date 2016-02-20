@@ -66,7 +66,7 @@ module.exports = function(grunt) {
               wait: false
             },
             server: {
-              args: ["server", "--nobrowser"]
+              args: ["server", "--nobrowser", "--log-file=console"]
             }
         },
         karma: {
@@ -398,6 +398,7 @@ module.exports = function(grunt) {
     	grunt.config("copy.folderCopy.cwd", grunt.config("CWD"));
     	grunt.config("copy.folderCopy.src", "**/*");
     	grunt.config("copy.folderCopy.dest", destfile);
+    	grunt.config("copy.folderCopy.dot", true);
     	grunt.task.run("copy:folderCopy");
     });
     

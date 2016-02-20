@@ -489,15 +489,17 @@ function socketConnect(socket) {
 						  var timestamp = Math.round(100 * (header.tv_sec * 1000 + header.tv_usec/1000 - now))/100;
 						  //console.log(util.inspect(packet, {depth: null}));
 						  //console.log(packet.payload.payload.payload.data.toString('hex'));
-						  var asn1 = decode(packet.payload.payload.payload.data.toString('hex'));
+						  var payload = packet.payload.payload;
+						  //console.log(util.inspect(payload, {depth: null}));
+						  var asn1 = decode(payload.payload.data.toString('hex'));
 						  var pdu = decoded_pdu(asn1);
 						  //console.log(util.inspect(pdu, {depth: null}));
 						  if(!!pdu.oids && pdu.oids.length > 0) {
 							  pdu.timestamp = timestamp;
 							  if(pdu.command === 'Response') {
-								  pdu.ip = _(packet.payload.payload.saddr).values().join(".");
+								  pdu.ip = _.chain(payload.saddr).values().flatten().value().join(".");
 							  } else {
-								  pdu.ip = _(packet.payload.payload.daddr).values().join(".");
+								  pdu.ip = _.chain(payload.daddr).values().flatten().value().join(".");
 							  }
 							  write(pdu);
 							  socket.emit("pcap_track", {packet: pdu, responses_only:responses_only});

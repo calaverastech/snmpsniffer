@@ -137,6 +137,10 @@ Run uninstall script from the application folder
 
 For listenings for packages, the application uses the library node_pcap https://github.com/mranney/node_pcap . 
 
+#### KNOWN ISSUES
+
+Capturing packets is behind and is not triggered on the first SNMP command run. The packets shown are from the previous SNMP command. This is most likely an issue with the node_pcap library. 
+
 
 #### OPEN SOURCE CONTRIBUTIONS, BUGS REPORTS ANF NEW FEATURE REQUESTS
 
