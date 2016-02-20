@@ -8,7 +8,7 @@ if [ "x$node" = "x" ];then
 	exit 1
 fi
 npm=$(which npm 2> /dev/null)
-if [ "xnpm" = "x" ];then
+if [ "x$npm" = "x" ];then
     echo "npm is not installed"
 fi
 
