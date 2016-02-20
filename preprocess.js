@@ -37,7 +37,8 @@ exports.preprocess = function(port) {
 		//check node version
 		var nodever = process.version;
 		var jsonver = pkg.engines.node;
-		if(!semver.satisfies(nodever, ">=" + jsonver)) {
+		//.replace(/^[~\^<>]/gi, "")
+		if(semver.satisfies(semver.clean(nodever), semver.clean(jsonver))) {
 			console.log("The required node version is at least " + jsonver + "; but your node version is " + nodever + ". Please, update your node version");
 			process.exit(1);
 		}	

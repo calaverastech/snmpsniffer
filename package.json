@@ -5,11 +5,12 @@
   "version": "1.0.1",
   "private": true,
   "engines": {
-    "node": "0.10.x",
-    "npm": "2.7"
+    "node": ">=0.12.0",
+    "npm": ">=2.7"
   },
   "main": "node/main",
   "dependencies": {
+    "nan": "2.2.x",
     "connect": "3.3",
     "express": "4.10",
     "body-parser": "1.10",
@@ -17,7 +18,7 @@
     "jade": "1.8",
     "pcap": "https://github.com/mranney/node_pcap#61ed9798de9761d97282e312f0bed6b664aa5005",
     "socket.io": "1.x",
-    "semver": "1.1",
+    "semver": "5.1.x",
     "minimist": "1.1",
     "log4js": "0.6.x",
     "ps-tree": "0.0.3"
