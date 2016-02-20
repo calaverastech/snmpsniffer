@@ -508,5 +508,17 @@ module.exports = function(grunt) {
 //    	grunt.config('karma.unit.options.basePath', 'public/dist');
 //    	grunt.task.run("karma:unit");
 //    });
+    
+    grunt.registerTask("build", "Build depending on platform", function() {
+    	//architecture options: x64, m32, ia32 (windows)
+    	switch(process.platform) {
+    	   case "linux": grunt.task.run("packageLinux");
+    		   			 break;
+    	   case "darwin": grunt.task.run("packageMac");
+    		              break;
+    	   default: console.log("Unsupported platform " + process.platform);
+    	}
+    	//grunt.task.run("gitSubmodule");
+    });
 
 };
