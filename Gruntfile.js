@@ -123,6 +123,14 @@ module.exports = function(grunt) {
         	}
         },
         clean: {
+        	tmp: {
+                cwd: '<%= CWD %>/',
+                src: ["tmp"],
+                expand: true,
+                options: {
+                    force: true
+                }
+        	},
             linuxPrepare: {
                 cwd: '<%= CWD %>/',
                 src: ["packages/linux/*"],
@@ -248,14 +256,6 @@ module.exports = function(grunt) {
         		}
         	}
         },
-        commands: {
-        	mkdir_tmp: {
-        		cmd: ["mkdir -p tmp", "rm -rf tmp/*"]
-        	},
-        	rm_tmp: {
-        		cmd: ["rm -rf tmp"]
-        	}
-        },
         plistbuddy: {
         	setFlagRelocatable: {
         		method: "Set",
@@ -352,7 +352,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-commands');
     grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-run');
     grunt.loadNpmTasks('grunt-chmod');
@@ -415,16 +414,19 @@ module.exports = function(grunt) {
     	grunt.task.run(["backup", "jshintLocal", "exec:runassudo:mochaLocal:"+passw, "karma:unit"]);
     	if(!!commitmsg) {
     		grunt.option("msg", commitmsg);
-    	}	
-    	grunt.task.run(["gitProjects", "gitpush"]);
+    	}
+    	if(grunt.option("git")) {
+    		grunt.task.run(["gitProjects", "gitpush"]);
+    	}
     });
 
     grunt.registerTask("uglifyServer", "Uglify server files", function() {
-        grunt.task.run(["commands:mkdir_tmp", "copy:serverCopy", "uglify"]);
+    	grunt.file.mkdir("tmp");
+        grunt.task.run(["copy:serverCopy", "uglify"]);
     });
     
     grunt.registerTask("copyMinServer", "Copy uglified server files", function() {
-		grunt.task.run(['copy:serverCopyBack', "commands:rm_tmp"]);
+		grunt.task.run(['copy:serverCopyBack', "clean:tmp"]);
     });
     
     grunt.registerTask("minify", "Minify javascript files", ["requirejs:compile", "uglifyServer", "copyMinServer"]);
