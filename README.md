@@ -40,7 +40,7 @@ NOTE: running the application requires administrator (sudo) privileges.
 
 1. Install Nodejs
 
-  The application requires Nodejs to run, version 0.10 or above. Download Nodejs for Mac OS X and install it according   to http://nodejs.org/download/.
+  The application requires Nodejs to run, version 0.12 or above. Download Nodejs for Mac OS X and install it according   to http://nodejs.org/download/.
 
 2. Some npm libraries are built during the application installation, so node-gyp is required. Check if it's installed:
 
@@ -63,7 +63,7 @@ https://github.com/TooTallNate/node-gyp
 
 1. Install Nodejs
 
-  The application requires Nodejs to run, version 0.10 or above. Download Nodejs for Linux and install it according to   http://nodejs.org/download/.
+  The application requires Nodejs to run, version 0.12 or above. Download Nodejs for Linux and install it according to   http://nodejs.org/download/.
 
 2. Some npm libraries are built during the application installation, so node-gyp is required. Check if it's installed:
 

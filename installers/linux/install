@@ -8,8 +8,8 @@ if [ "x$prefix" = "x" ]; then
 	exit 1
 else
 	versionshort=$(node --version | sed -r 's|^v0\.([0-9]+)\.([0-9]+)|\1|'| bc)
-	if [ $versionshort -lt 10 ]; then
-		echo "Your Nodejs version is $version10. The application required Nodejs version 0.10 or above, please, update your version."
+	if [ $versionshort -lt 12 ]; then
+		echo "Your Nodejs version is $versionshort. The application required Nodejs version 0.12 or above, please, update your version."
 		exit 1
 	fi
 fi

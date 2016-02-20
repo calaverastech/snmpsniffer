@@ -49,7 +49,7 @@ For MAC OS X Users
 
 1. Install Nodejs
 
-The application requires Nodejs to run, version 0.10 or above. Download Nodejs for Mac OS X and install it according to http://nodejs.org/download/. 
+The application requires Nodejs to run, version 0.12 or above. Download Nodejs for Mac OS X and install it according to http://nodejs.org/download/. 
 
 2. Some npm libraries are built during the application installation, so node-gyp is required. Check if it's installed:
 
@@ -73,7 +73,7 @@ For Linux Users
 
 1. Install Nodejs
 
-The application requires Nodejs to run, version 0.10 or above. Download Nodejs for Linux and install it according to http://nodejs.org/download/. The "node" application should be added to the path. Check the version with:
+The application requires Nodejs to run, version 0.12 or above. Download Nodejs for Linux and install it according to http://nodejs.org/download/. The "node" application should be added to the path. Check the version with:
 
 > node -v
 

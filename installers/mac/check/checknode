@@ -35,8 +35,8 @@ NODEVERSION=$(osascript <<EOF
 EOF)
 
 if [ -n "$NODEVERSION" ];then
-    if (( $(bc <<< "$NODEVERSION < 0.1") ));then
-        echo "nodejs version 0.10 or above is not installed"
+    if (( $(bc <<< "$NODEVERSION < 0.12") ));then
+        echo "nodejs version 0.12 or above is not installed"
         exit 1
     else
         exit 0
