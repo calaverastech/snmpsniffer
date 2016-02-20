@@ -367,7 +367,7 @@ app.locals._ = require("underscore");
 app.use(express.static(__dirname + '/icons'));
 app.use(express.static(__dirname + '/public/css'));
 app.use(express.static(__dirname + '/public/js'));
-app.use(express.static(__dirname + '/node_modules/socket.io/node_modules/socket.io-client'));
+app.use(express.static(__dirname + '/node_modules/socket.io-client'));
 
 app.get('/', function(req, res){
 	var interfaces = os.networkInterfaces();

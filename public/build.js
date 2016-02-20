@@ -5,7 +5,7 @@
     underscore: 'lib/underscore-min',
     backbone: 'lib/backbone-min',
    'backbone.localStorage': 'lib/backbone.localStorage-min',
-    socketio: '../../node_modules/socket.io/node_modules/socket.io-client/socket.io',
+    socketio: '../../node_modules/socket.io-client/socket.io',
     templates: 'src/templates',
     infrastructure: "infrastructure"
   },
