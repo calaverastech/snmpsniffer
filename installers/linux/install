@@ -7,9 +7,11 @@ if [ "x$prefix" = "x" ]; then
 	echo "Nodejs is not installed"
 	exit 1
 else
-	versionshort=$(node --version | sed -r 's|^v0\.([0-9]+)\.([0-9]+)|\1|'| bc)
-	if [ $versionshort -lt 12 ]; then
-		echo "Your Nodejs version is $versionshort. The application required Nodejs version 0.12 or above, please, update your version."
+    versionvalid="0.12"
+	versionshort=$(node --version | sed -r 's|^v([0-9]+\.[0-9]+)\.([0-9]+)|\1|')
+    comp=$(echo "$versionshort <= $versionvalid" | bc -l)
+	if [ $comp -eq 1 ]; then
+		echo "Your Nodejs version is $versionshort. The application required Nodejs version $versionvalid or above, please, update your version."
 		exit 1
 	fi
 fi
@@ -18,6 +20,7 @@ if [ -f /etc/debian_version ] || [ -f /etc/fedora_release ]; then app_prefix="/u
 
 
 echo "Installing packages..."
+cd "$(dirname "$0")"
 if [ -w $prefix ];then
 	NODE_ENV=production "$prefix/npm" install -g
 	echo "Create node global symlink..."
